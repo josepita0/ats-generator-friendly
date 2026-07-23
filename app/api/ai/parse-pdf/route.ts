@@ -107,14 +107,32 @@ export async function POST(request: NextRequest) {
 
     const interaction = await client.interactions.create({
       model: 'gemini-3.6-flash',
-      input: `Parse this CV text into a structured JSON object. Extract all information present.
+      input: `You are a CV text parser. Your task is to EXTRACT information only — do NOT translate.
 
-Rules:
+DETECT LANGUAGE FIRST:
+- Read the CV text and determine if it's in Spanish or English.
+- Set "language" to "es" for Spanish or "en" for English.
+
+EXTRACT ALL SECTIONS COMPLETELY (do not skip any):
+
+1. personalInfo — name, email, phone, location, linkedin, website
+2. summary — write the professional summary exactly as it appears
+3. experience — extract EVERY work experience entry (not just the first). Each entry must have company, position, location, dates, and descriptions.
+4. education — extract EVERY education entry. Each must have institution, degree, field, and dates.
+5. skills — extract EVERY skill category with ALL skills listed.
+6. languages — extract EVERY language with its proficiency level.
+
+BILLINGUAL TEXT FIELDS (summary, position, descriptions, degree, field):
+- Only fill the detected language field (es OR en) with the extracted text
+- Leave the other language field as empty string ""
+- DO NOT translate. DO NOT copy content to both languages.
+
+FORMATTING:
 - Dates in MM/YYYY format
-- Most recent first
-- Empty string "" if not available
+- Most recent experience/education first
+- Empty string "" if information is not available
 - Generate unique IDs with crypto.randomUUID() format
-- Keep descriptions concise but complete
+- Keep descriptions concise but complete — preserve all achievements and details
 
 CV TEXT:
 ${text}`,
