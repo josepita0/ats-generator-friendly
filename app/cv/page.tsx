@@ -24,6 +24,11 @@ const PdfImporter = dynamic(
   { ssr: false }
 );
 
+const TranslateButton = dynamic(
+  () => import('@/components/cv-form/TranslateButton').then((mod) => mod.TranslateButton),
+  { ssr: false }
+);
+
 const dictionaries = { es, en };
 
 export default function CVPage() {
@@ -81,6 +86,12 @@ export default function CVPage() {
     });
   };
 
+  const handleTranslate = (data: CVData) => {
+    Object.entries(data).forEach(([key, value]) => {
+      setValue(key as keyof CVData, value);
+    });
+  };
+
   if (!mounted) {
     return (
       <div className="bg-pattern min-h-screen flex items-center justify-center">
@@ -127,6 +138,13 @@ export default function CVPage() {
         <div className="flex flex-col -space-y-6">
           <div className="rounded bg-surface-container retro-border p-6 mb-4">
             <PdfImporter onImport={handleImport} dict={dict} />
+            <div className="mt-4 border-t border-on-surface-variant/20 pt-4">
+              <TranslateButton
+                onTranslate={handleTranslate}
+                dict={dict}
+                getCvData={() => getValues()}
+              />
+            </div>
           </div>
 
           <FormProvider {...methods}>

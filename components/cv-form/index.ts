@@ -5,3 +5,4 @@ export { EducationSection } from './EducationSection';
 export { SkillsSection } from './SkillsSection';
 export { LanguagesSection } from './LanguagesSection';
 export { PdfImporter } from './PdfImporter';
+export { TranslateButton } from './TranslateButton';
