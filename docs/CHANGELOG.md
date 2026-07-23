@@ -3,13 +3,18 @@
 ## [Unreleased]
 
 ### Added
--
+- `/api/ai/translate` — new Gemini endpoint for professional CV translation (ES↔EN)
+- `TranslateButton` component — direction selector + translate button with loading/error states
+- `translate.*` i18n keys to both ES/EN dictionaries
 
 ### Changed
--
+- PDF parsing prompt: extract only (no translation), detect language, fill only detected language, explicit instructions for ALL sections (experience, education, skills, languages)
+- `TranslateButton` uses `getCvData` callback for live form data instead of static snapshot
+- Removed unused `openai` dependency
 
 ### Fixed
--
+- PDF import was missing education, skills, and languages — AI was overloaded with parse+translate, now only extracts
+- Bilingual fields were filled in both languages during import — now only the detected language is populated until user translates
 
 ---
 
