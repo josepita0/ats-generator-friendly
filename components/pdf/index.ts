@@ -1,0 +1,1 @@
+export { CVDocument } from './CVDocument';
