@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CVData } from '@/types/cv';
 import { cvDataSchema } from '@/lib/cv/schemas';
 import { createEmptyCVData } from '@/lib/cv/defaults';
+import { replaceBulletInDescriptions } from '@/lib/cv/descriptions';
 import { loadCVData, saveCVData } from '@/lib/storage';
 import { es, en, Dictionary } from '@/lib/i18n/dictionaries';
 import {
@@ -31,6 +32,22 @@ const TranslateButton = dynamic(
 
 const dictionaries = { es, en };
 
+function normalizeDates(data: CVData): CVData {
+  return {
+    ...data,
+    experience: data.experience.map((exp) => ({
+      ...exp,
+      endDate: exp.endDate || exp.startDate || '',
+      startDate: exp.startDate && !exp.endDate ? '' : exp.startDate || '',
+    })),
+    education: data.education.map((edu) => ({
+      ...edu,
+      endDate: edu.endDate || edu.startDate || '',
+      startDate: edu.startDate && !edu.endDate ? '' : edu.startDate || '',
+    })),
+  };
+}
+
 export default function CVPage() {
   const [mounted, setMounted] = useState(false);
   const [initialData, setInitialData] = useState<CVData>(() => createEmptyCVData());
@@ -38,20 +55,21 @@ export default function CVPage() {
   const [formData, setFormData] = useState<CVData | null>(null);
   const [lang, setLang] = useState<'es' | 'en'>('es');
 
+  const methods = useForm<CVData>({
+    resolver: zodResolver(cvDataSchema),
+    values: initialData,
+  });
+
+  const { handleSubmit, watch, setValue, getValues, formState: { isDirty } } = methods;
+
   useEffect(() => {
     setMounted(true);
     const stored = loadCVData();
     if (stored) {
-      setInitialData(stored);
+      const normalized = normalizeDates(stored);
+      setInitialData(normalized);
     }
   }, []);
-
-  const methods = useForm<CVData>({
-    resolver: zodResolver(cvDataSchema),
-    defaultValues: initialData,
-  });
-
-  const { handleSubmit, watch, setValue, getValues, formState: { isDirty } } = methods;
 
   const currentLang = watch('language');
   useEffect(() => {
@@ -81,13 +99,15 @@ export default function CVPage() {
   }, [watch, mounted]);
 
   const handleImport = (data: CVData) => {
-    Object.entries(data).forEach(([key, value]) => {
+    const normalized = replaceBulletInDescriptions(data);
+    Object.entries(normalized).forEach(([key, value]) => {
       setValue(key as keyof CVData, value);
     });
   };
 
   const handleTranslate = (data: CVData) => {
-    Object.entries(data).forEach(([key, value]) => {
+    const normalized = replaceBulletInDescriptions(data);
+    Object.entries(normalized).forEach(([key, value]) => {
       setValue(key as keyof CVData, value);
     });
   };
@@ -110,7 +130,7 @@ export default function CVPage() {
                 <div className="flex items-center gap-4 text-on-surface">
                   <div className="size-6 text-primary">
                     <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                      <path clip-rule="evenodd" d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" fill="currentColor" fill-rule="evenodd" />
+                      <path d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" fill="currentColor"  />
                     </svg>
                   </div>
                   <h2 className="text-on-surface text-lg font-bold leading-tight tracking-[-0.015em] font-headline-md">RETRORESUME</h2>
