@@ -3,6 +3,7 @@
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 import { CVData } from '@/types/cv';
 import { Dictionary } from '@/lib/i18n/dictionaries';
+import { parseBullets } from '@/lib/cv/descriptions';
 
 Font.register({
   family: 'Helvetica',
@@ -88,6 +89,21 @@ const styles = StyleSheet.create({
     lineHeight: 1.3,
     color: '#2a2a2a',
   },
+  bulletRow: {
+    flexDirection: 'row',
+    marginTop: 1,
+    paddingLeft: 8,
+  },
+  bullet: {
+    fontSize: 8,
+    width: 10,
+  },
+  bulletText: {
+    fontSize: 8,
+    lineHeight: 1.3,
+    color: '#2a2a2a',
+    flex: 1,
+  },
   educationEntry: {
     marginBottom: 6,
   },
@@ -125,6 +141,9 @@ const styles = StyleSheet.create({
   },
 });
 
+const MONTHS_ES = ['', 'Ene.', 'Feb.', 'Mar.', 'Abr.', 'May.', 'Jun.', 'Jul.', 'Ago.', 'Sep.', 'Oct.', 'Nov.', 'Dic.'];
+const MONTHS_EN = ['', 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
+
 interface Props {
   data: CVData;
   dict: Dictionary;
@@ -133,10 +152,19 @@ interface Props {
 export function CVDocument({ data, dict }: Props) {
   const { personalInfo, summary, experience, education, skills, languages, language } = data;
 
-  const formatDate = (date: string | undefined) => {
+  const formatDate = (date: string | undefined, lang: 'es' | 'en') => {
     if (!date) return '';
-    const [year, month] = date.split('-');
-    return `${month}/${year}`;
+    const parts = date.split(/[\/-]/);
+    if (parts.length !== 2) return date;
+    let month = parts[0];
+    let year = parts[1];
+    if (parts[0].length === 4) {
+      year = parts[0];
+      month = parts[1];
+    }
+    const months = lang === 'en' ? MONTHS_EN : MONTHS_ES;
+    const monthName = months[parseInt(month, 10)] || month;
+    return `${monthName} ${year}`;
   };
 
   const summaryContent = language === 'es' ? summary.es : summary.en;
@@ -144,6 +172,20 @@ export function CVDocument({ data, dict }: Props) {
     language === 'es' ? exp.position.es : exp.position.en;
   const expDesc = (exp: CVData['experience'][0]) =>
     language === 'es' ? exp.descriptions.es : exp.descriptions.en;
+
+  const renderDescription = (text: string) => {
+    if (!text) return null;
+    const result = parseBullets(text);
+    if (result) {
+      return result.items.map((item, i) => (
+        <View key={i} style={styles.bulletRow}>
+          <Text style={styles.bullet}>{result.bullet}</Text>
+          <Text style={styles.bulletText}>{item}</Text>
+        </View>
+      ));
+    }
+    return <Text style={styles.description}>{text}</Text>;
+  };
   const eduDegree = (edu: CVData['education'][0]) =>
     language === 'es' ? edu.degree.es : edu.degree.en;
   const eduField = (edu: CVData['education'][0]) =>
@@ -178,14 +220,14 @@ export function CVDocument({ data, dict }: Props) {
                 <View style={styles.experienceHeader}>
                   <Text style={styles.position}>{expPosition(exp)}</Text>
                   <Text style={styles.dateRange}>
-                    {formatDate(exp.startDate)} — {exp.current ? 'Present' : formatDate(exp.endDate)}
+                    {formatDate(exp.startDate, language)} — {exp.current ? 'Present' : formatDate(exp.endDate, language)}
                   </Text>
                 </View>
                 <View style={styles.companyRow}>
                   <Text style={styles.company}>{exp.company}</Text>
                   <Text style={styles.location}>{exp.location}</Text>
                 </View>
-                {expDesc(exp) && <Text style={styles.description}>{expDesc(exp)}</Text>}
+                {renderDescription(expDesc(exp))}
               </View>
             ))}
           </View>
@@ -202,7 +244,7 @@ export function CVDocument({ data, dict }: Props) {
                 <View style={styles.companyRow}>
                   <Text style={styles.institution}>{edu.institution}</Text>
                   <Text style={styles.dateRange}>
-                    {formatDate(edu.startDate)} — {formatDate(edu.endDate)}
+                    {formatDate(edu.startDate, language)} — {formatDate(edu.endDate, language)}
                   </Text>
                 </View>
               </View>

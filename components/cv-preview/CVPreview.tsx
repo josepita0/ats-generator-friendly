@@ -2,6 +2,7 @@
 
 import { CVData } from '@/types/cv';
 import { Dictionary } from '@/lib/i18n/dictionaries';
+import { parseBullets } from '@/lib/cv/descriptions';
 
 interface Props {
   data: CVData;
@@ -11,10 +12,22 @@ interface Props {
 export function CVPreview({ data, dict }: Props) {
   const { personalInfo, summary, experience, education, skills, languages, language } = data;
 
+  const MONTHS_ES = ['', 'Ene.', 'Feb.', 'Mar.', 'Abr.', 'May.', 'Jun.', 'Jul.', 'Ago.', 'Sep.', 'Oct.', 'Nov.', 'Dic.'];
+  const MONTHS_EN = ['', 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
+
   const formatDate = (date: string | undefined) => {
     if (!date) return '';
-    const [year, month] = date.split('-');
-    return `${month}/${year}`;
+    const parts = date.split(/[\/-]/);
+    if (parts.length !== 2) return date;
+    let month = parts[0];
+    let year = parts[1];
+    if (parts[0].length === 4) {
+      year = parts[0];
+      month = parts[1];
+    }
+    const months = language === 'en' ? MONTHS_EN : MONTHS_ES;
+    const monthName = months[parseInt(month, 10)] || month;
+    return `${monthName} ${year}`;
   };
 
   const content = language === 'es' ? summary.es : summary.en;
@@ -60,11 +73,21 @@ export function CVPreview({ data, dict }: Props) {
                 <span>{exp.company}</span>
                 <span>{exp.location}</span>
               </div>
-              {(language === 'es' ? exp.descriptions.es : exp.descriptions.en) && (
-                <p className="mt-1 whitespace-pre-line text-xs">
-                  {language === 'es' ? exp.descriptions.es : exp.descriptions.en}
-                </p>
-              )}
+              {(() => {
+                const desc = language === 'es' ? exp.descriptions.es : exp.descriptions.en;
+                if (!desc) return null;
+                const result = parseBullets(desc);
+                if (result) {
+                  return (
+                    <ul className="mt-1 list-none text-xs whitespace-pre-line">
+                      {result.items.map((item, i) => (
+                        <li key={i}>{result.bullet} {item}</li>
+                      ))}
+                    </ul>
+                  );
+                }
+                return <p className="mt-1 whitespace-pre-line text-xs">{desc}</p>;
+              })()}
             </div>
           ))}
         </section>
