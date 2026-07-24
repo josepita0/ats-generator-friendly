@@ -1,16 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useFormContext, useFieldArray } from 'react-hook-form';
+import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import { CVData } from '@/types/cv';
 import { Dictionary } from '@/lib/i18n/dictionaries';
+import { MonthYearPicker } from './MonthYearPicker';
 
 interface Props {
   dict: Dictionary;
 }
 
 export function ExperienceSection({ dict }: Props) {
-  const { register } = useFormContext<CVData>();
+  const { register, control } = useFormContext<CVData>();
   const { fields, append, remove } = useFieldArray({ name: 'experience' });
   const [collapsed, setCollapsed] = useState(false);
 
@@ -84,11 +85,34 @@ export function ExperienceSection({ dict }: Props) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
                 <div className="flex flex-col gap-1">
                   <label className="font-label-md font-bold text-xs">{dict.fields.startDate}</label>
-                  <input type="month" {...register(`experience.${index}.startDate` as const, { required: dict.validation.required })} className="retro-input p-2 w-full text-sm" />
+                  <Controller
+                    control={control}
+                    name={`experience.${index}.startDate` as const}
+                    rules={{ required: dict.validation.required }}
+                    render={({ field }) => (
+                      <MonthYearPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                      />
+                    )}
+                  />
                 </div>
                 <div className="flex flex-col gap-1">
                   <label className="font-label-md font-bold text-xs">{dict.fields.endDate}</label>
-                  <input type="month" {...register(`experience.${index}.endDate` as const)} className="retro-input p-2 w-full text-sm" />
+                  <Controller
+                    control={control}
+                    name={`experience.${index}.endDate` as const}
+                    render={({ field }) => (
+                      <MonthYearPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                      />
+                    )}
+                  />
                 </div>
                 <div className="flex items-center gap-2 mt-4">
                   <input type="checkbox" id={`current-${field.id}`} {...register(`experience.${index}.current` as const)} className="h-4 w-4" />
