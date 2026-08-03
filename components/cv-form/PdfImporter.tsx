@@ -8,11 +8,12 @@ import { Dictionary } from '@/lib/i18n/dictionaries';
 interface Props {
   onImport: (data: CVData) => void;
   dict: Dictionary;
+  compact?: boolean;
 }
 
 type ImportState = 'idle' | 'extracting' | 'parsing' | 'success' | 'error';
 
-export function PdfImporter({ onImport, dict }: Props) {
+export function PdfImporter({ onImport, dict, compact = false }: Props) {
   const [state, setState] = useState<ImportState>('idle');
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -67,9 +68,39 @@ export function PdfImporter({ onImport, dict }: Props) {
       case 'error':
         return dict.pdfImporter.tryAgain;
       default:
-        return dict.form.importPdf;
+        return 'IMPORT PDF';
     }
   };
+
+  const isDisabled = state === 'extracting' || state === 'parsing';
+
+  if (compact) {
+    return (
+      <div className="relative">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isDisabled}
+          className="px-btn-orange flex items-center gap-1.5"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          {getButtonText()}
+        </button>
+        {state === 'error' && (
+          <p className="absolute top-full left-0 mt-1 text-[10px] text-red-400 font-label-md whitespace-nowrap">{error}</p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -83,10 +114,10 @@ export function PdfImporter({ onImport, dict }: Props) {
       <button
         type="button"
         onClick={() => fileInputRef.current?.click()}
-        disabled={state === 'extracting' || state === 'parsing'}
-        className="flex items-center gap-2 bg-surface-variant text-on-surface px-6 py-4 font-label-md font-bold rounded-full retro-border hover:bg-surface-bright transition-colors disabled:opacity-50"
+        disabled={isDisabled}
+        className="px-btn-orange flex items-center gap-2 py-3 px-5"
       >
-        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
         </svg>
         {getButtonText()}

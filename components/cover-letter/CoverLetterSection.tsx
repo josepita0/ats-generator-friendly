@@ -6,13 +6,13 @@ import type { CVData } from '@/types/cv';
 import type { Dictionary } from '@/lib/i18n/dictionaries';
 import { saveCoverLetter, loadCoverLetter } from '@/lib/storage';
 import { CoverLetterDocument } from '@/components/pdf/CoverLetterDocument';
-import { CoverLetterPreview } from './CoverLetterPreview';
 
 interface Props {
   dict: Dictionary;
   getCvData: () => CVData;
   jobDescription: string;
   language: 'es' | 'en';
+  compact?: boolean;
 }
 
 type GenerateState = 'idle' | 'generating' | 'done' | 'error';
@@ -22,7 +22,7 @@ function getInitialLetter() {
   return loadCoverLetter() || { es: '', en: '' };
 }
 
-export function CoverLetterSection({ dict, getCvData, jobDescription, language }: Props) {
+export function CoverLetterSection({ dict, getCvData, jobDescription, language, compact = false }: Props) {
   const initialLetter = getInitialLetter();
   const [bodyEs, setBodyEs] = useState(initialLetter.es);
   const [bodyEn, setBodyEn] = useState(initialLetter.en);
@@ -30,7 +30,6 @@ export function CoverLetterSection({ dict, getCvData, jobDescription, language }
     initialLetter.es || initialLetter.en ? 'done' : 'idle'
   );
   const [error, setError] = useState('');
-  const [showPreview, setShowPreview] = useState(false);
 
   const currentBody = language === 'es' ? bodyEs : bodyEn;
   const setCurrentBody = language === 'es' ? setBodyEs : setBodyEn;
@@ -116,6 +115,80 @@ export function CoverLetterSection({ dict, getCvData, jobDescription, language }
 
   const isDone = state === 'done' && currentBody.length > 0;
 
+  if (compact) {
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <span
+            className="text-[#FFF3D5] uppercase tracking-wider font-headline-md"
+            style={{ fontSize: '0.5rem' }}
+          >
+            {dict.coverLetter.title}
+          </span>
+          <div className="flex items-center gap-1">
+            {isDone && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="px-pill text-[10px]"
+                >
+                  {dict.coverLetter.copy}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadPDF}
+                  className="px-btn-teal text-[10px] py-0.5 px-2"
+                >
+                  PDF
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGenerate}
+          disabled={state === 'generating'}
+          className="px-btn-teal w-full flex items-center justify-center gap-1.5 py-1.5 text-xs"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          {getButtonText()}
+        </button>
+
+        {state === 'generating' && (
+          <div className="flex items-center gap-2">
+            <div className="w-3.5 h-3.5 border-2 border-[#2AB7C9] border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs text-[#FFF3D5]/70 animate-pulse">{dict.coverLetter.processing}</span>
+          </div>
+        )}
+
+        {error && (
+          <p className="text-xs text-red-400 font-label-md">{error}</p>
+        )}
+
+        {state === 'idle' && !isDone && (
+          <p className="text-xs text-[#FFF3D5]/70">{dict.coverLetter.emptyHint}</p>
+        )}
+
+        {isDone && (
+          <textarea
+            value={currentBody}
+            onChange={(e) => handleBodyChange(e.target.value)}
+            rows={8}
+            className="px-input w-full text-xs resize-y"
+            aria-label={dict.coverLetter.placeholder}
+            placeholder={dict.coverLetter.placeholder}
+            style={{ fontFamily: "'Courier New', monospace" }}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="rounded bg-surface-container retro-border p-6 mb-4">
       <div className="flex items-center justify-between mb-4">
@@ -128,17 +201,6 @@ export function CoverLetterSection({ dict, getCvData, jobDescription, language }
         <div className="flex items-center gap-2">
           {isDone && (
             <>
-              <button
-                type="button"
-                onClick={() => setShowPreview(!showPreview)}
-                className={`text-xs px-3 py-1 rounded-full font-label-md transition-colors cursor-pointer ${
-                  showPreview
-                    ? 'bg-secondary text-on-secondary'
-                    : 'bg-surface-bright text-on-surface hover:bg-surface-container-high'
-                }`}
-              >
-                {dict.coverLetter.preview}
-              </button>
               <button
                 type="button"
                 onClick={handleCopy}
@@ -158,59 +220,45 @@ export function CoverLetterSection({ dict, getCvData, jobDescription, language }
         </div>
       </div>
 
-      <div className={`gap-4 ${isDone && showPreview ? 'grid grid-cols-1 md:grid-cols-2' : ''}`}>
-        <div>
-          {!isDone && state !== 'generating' && (
-            <p className="text-sm text-on-surface mb-4">
-              {dict.coverLetter.emptyHint}
-            </p>
-          )}
+      {!isDone && state !== 'generating' && (
+        <p className="text-sm text-on-surface mb-4">
+          {dict.coverLetter.emptyHint}
+        </p>
+      )}
 
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={state === 'generating'}
-            className="flex items-center gap-2 bg-surface-variant text-on-surface px-6 py-3 font-label-md font-bold rounded-full retro-border hover:bg-surface-bright transition-colors disabled:opacity-50 cursor-pointer mb-4"
-          >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            {getButtonText()}
-          </button>
+      <button
+        type="button"
+        onClick={handleGenerate}
+        disabled={state === 'generating'}
+        className="flex items-center gap-2 bg-surface-variant text-on-surface px-6 py-3 font-label-md font-bold rounded-full retro-border hover:bg-surface-bright transition-colors disabled:opacity-50 cursor-pointer mb-4"
+      >
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        {getButtonText()}
+      </button>
 
-          {state === 'generating' && (
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
-              <span className="text-sm text-on-surface-variant animate-pulse">{dict.coverLetter.processing}</span>
-            </div>
-          )}
-
-          {error && (
-            <p className="text-sm text-red-500 font-label-md mb-4">{error}</p>
-          )}
-
-          {isDone && (
-            <textarea
-              value={currentBody}
-              onChange={(e) => handleBodyChange(e.target.value)}
-              rows={16}
-              className="retro-input w-full p-4 text-sm font-mono resize-y"
-              aria-label={dict.coverLetter.placeholder}
-              placeholder={dict.coverLetter.placeholder}
-            />
-          )}
+      {state === 'generating' && (
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm text-on-surface-variant animate-pulse">{dict.coverLetter.processing}</span>
         </div>
+      )}
 
-        {isDone && showPreview && (
-          <div className="min-h-[400px] max-h-[600px]">
-            <CoverLetterPreview
-              personalInfo={getCvData().personalInfo}
-              body={currentBody}
-              language={language}
-            />
-          </div>
-        )}
-      </div>
+      {error && (
+        <p className="text-sm text-red-500 font-label-md mb-4">{error}</p>
+      )}
+
+      {isDone && (
+        <textarea
+          value={currentBody}
+          onChange={(e) => handleBodyChange(e.target.value)}
+          rows={16}
+          className="retro-input w-full p-4 text-sm font-mono resize-y"
+          aria-label={dict.coverLetter.placeholder}
+          placeholder={dict.coverLetter.placeholder}
+        />
+      )}
     </div>
   );
 }

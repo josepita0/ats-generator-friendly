@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
-import { CVData } from '@/types/cv';
-import { Dictionary } from '@/lib/i18n/dictionaries';
-import { MonthYearPicker } from './MonthYearPicker';
+import { useState } from "react";
+import { useFormContext, useFieldArray, Controller } from "react-hook-form";
+import { CVData } from "@/types/cv";
+import { Dictionary } from "@/lib/i18n/dictionaries";
+import { MonthYearPicker } from "./MonthYearPicker";
 
 interface Props {
   dict: Dictionary;
@@ -12,106 +12,144 @@ interface Props {
 
 export function EducationSection({ dict }: Props) {
   const { register, control } = useFormContext<CVData>();
-  const { fields, append, remove } = useFieldArray({ name: 'education' });
+  const { fields, append, remove } = useFieldArray({ name: "education" });
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="retro-card bg-[#92e5c8] p-8 text-black relative z-20 translate-x-3">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="font-headline-md text-2xl font-black uppercase tracking-wide flex items-center gap-3">
-          <span className="text-3xl">🎓</span>
+    <div className="section-card">
+      <div className="section-header rounded-t-lg">
+        <div className="section-header-title">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+          </svg>
           {dict.form.education}
-        </h3>
-        <div className="flex items-center gap-3">
+        </div>
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() =>
               append({
                 id: crypto.randomUUID(),
-                institution: '',
-                degree: { es: '', en: '' },
-                field: { es: '', en: '' },
-                startDate: '',
-                endDate: '',
+                institution: "",
+                degree: { es: "", en: "" },
+                field: { es: "", en: "" },
+                startDate: "",
+                endDate: "",
               })
             }
-            className="bg-black text-white px-4 py-2 rounded-full font-label-md font-bold border-2 border-black hover:bg-white hover:text-black transition-colors flex items-center gap-2 text-sm"
+            className="px-btn-add"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
-            </svg>
-            {dict.form.add}
+            + {dict.form.add}
           </button>
-          <button type="button" onClick={() => setCollapsed(!collapsed)} className="cursor-pointer hover:scale-110 transition-transform">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={collapsed ? "M19 9l-7 7-7-7" : "M5 15l7-7 7 7"} />
+          <button
+            type="button"
+            onClick={() => setCollapsed(!collapsed)}
+            className="text-[#FFF3D5] hover:brightness-110 cursor-pointer"
+          >
+            <svg
+              className={`w-5 h-5 chevron-icon ${!collapsed ? 'rotated' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </button>
         </div>
       </div>
-      {!collapsed && (
-        <div className="space-y-4">
+      <div className={`section-collapse ${!collapsed ? 'open' : ''}`}>
+        <div>
+          <div className="section-body space-y-4 rounded-b-lg">
           {fields.map((field, index) => (
-            <div key={field.id} className="retro-border rounded-xl bg-white/60 p-4 relative">
+            <div
+              key={field.id}
+              className="bg-[#FFF3D5]/40 border-2 border-[#06132E] rounded-lg p-4 relative"
+            >
               <button
                 type="button"
                 onClick={() => remove(index)}
-                className="absolute top-2 right-2 text-red-700 hover:text-red-900 font-bold text-sm bg-white/80 rounded-full px-2 retro-border"
+                className="px-remove-btn"
               >
                 ✕
               </button>
-              <div className="flex flex-col gap-1">
-                <label className="font-label-md font-bold text-xs">{dict.fields.institution}</label>
-                <input {...register(`education.${index}.institution` as const, { required: dict.validation.required })} className="retro-input p-2 w-full text-sm" />
+              <div>
+                <label className="px-label">{dict.fields.institution}</label>
+                <input
+                  {...register(`education.${index}.institution` as const, {
+                    required: dict.validation.required,
+                  })}
+                  className="px-input"
+                />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                <div className="flex flex-col gap-1">
-                  <label className="font-label-md font-bold text-xs">{dict.fields.degree} (ES)</label>
-                  <input {...register(`education.${index}.degree.es` as const, { required: dict.validation.required })} className="retro-input p-2 w-full text-sm" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                <div>
+                  <label className="px-label">{dict.fields.degree} (ES)</label>
+                  <input
+                    {...register(`education.${index}.degree.es` as const, {
+                      required: dict.validation.required,
+                    })}
+                    className="px-input"
+                  />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="font-label-md font-bold text-xs">{dict.fields.degree} (EN)</label>
-                  <input {...register(`education.${index}.degree.en` as const)} className="retro-input p-2 w-full text-sm" />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                <div className="flex flex-col gap-1">
-                  <label className="font-label-md font-bold text-xs">{dict.fields.field} (ES)</label>
-                  <input {...register(`education.${index}.field.es` as const, { required: dict.validation.required })} className="retro-input p-2 w-full text-sm" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="font-label-md font-bold text-xs">{dict.fields.field} (EN)</label>
-                  <input {...register(`education.${index}.field.en` as const)} className="retro-input p-2 w-full text-sm" />
+                <div>
+                  <label className="px-label">{dict.fields.degree} (EN)</label>
+                  <input
+                    {...register(`education.${index}.degree.en` as const)}
+                    className="px-input"
+                  />
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                <div className="flex flex-col gap-1">
-                  <label className="font-label-md font-bold text-xs">{dict.fields.startDate}</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                <div>
+                  <label className="px-label">{dict.fields.field} (ES)</label>
+                  <input
+                    {...register(`education.${index}.field.es` as const, {
+                      required: dict.validation.required,
+                    })}
+                    className="px-input"
+                  />
+                </div>
+                <div>
+                  <label className="px-label">{dict.fields.field} (EN)</label>
+                  <input
+                    {...register(`education.${index}.field.en` as const)}
+                    className="px-input"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                <div>
+                  <label className="px-label">{dict.fields.startDate}</label>
                   <Controller
                     control={control}
                     name={`education.${index}.startDate` as const}
                     rules={{ required: dict.validation.required }}
-                    render={({ field }) => (
+                    render={({ field: f }) => (
                       <MonthYearPicker
-                        value={field.value}
-                        onChange={field.onChange}
-                        onBlur={field.onBlur}
-                        name={field.name}
+                        value={f.value}
+                        onChange={f.onChange}
+                        onBlur={f.onBlur}
+                        name={f.name}
                       />
                     )}
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="font-label-md font-bold text-xs">{dict.fields.endDate}</label>
+                <div>
+                  <label className="px-label">{dict.fields.endDate}</label>
                   <Controller
                     control={control}
                     name={`education.${index}.endDate` as const}
-                    render={({ field }) => (
+                    render={({ field: f }) => (
                       <MonthYearPicker
-                        value={field.value}
-                        onChange={field.onChange}
-                        onBlur={field.onBlur}
-                        name={field.name}
+                        value={f.value}
+                        onChange={f.onChange}
+                        onBlur={f.onBlur}
+                        name={f.name}
                       />
                     )}
                   />
@@ -120,7 +158,8 @@ export function EducationSection({ dict }: Props) {
             </div>
           ))}
         </div>
-      )}
+        </div>
+      </div>
     </div>
   );
 }

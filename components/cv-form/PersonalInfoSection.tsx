@@ -1,62 +1,120 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { CVData } from '@/types/cv';
-import { Dictionary } from '@/lib/i18n/dictionaries';
+import { useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { CVData } from "@/types/cv";
+import { Dictionary } from "@/lib/i18n/dictionaries";
 
 interface Props {
   dict: Dictionary;
 }
 
 export function PersonalInfoSection({ dict }: Props) {
-  const { register, formState: { errors: formErrors } } = useFormContext<CVData>();
+  const {
+    register,
+    formState: { errors: formErrors },
+  } = useFormContext<CVData>();
   const e = formErrors.personalInfo;
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="retro-card bg-[#d8b4e2] p-8 text-black relative z-50">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="font-headline-md text-2xl font-black uppercase tracking-wide flex items-center gap-3">
-          <span className="text-3xl">👤</span>
+    <div className="section-card">
+      <div className="section-header rounded-t-lg">
+        <div className="section-header-title">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .66.54 1.2 1.2 1.2h16.8c.66 0 1.2-.54 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z" />
+          </svg>
           {dict.form.personalInfo}
-        </h3>
-        <button type="button" onClick={() => setCollapsed(!collapsed)} className="cursor-pointer hover:scale-110 transition-transform">
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={collapsed ? "M19 9l-7 7-7-7" : "M5 15l7-7 7 7"} />
+        </div>
+        <button
+          type="button"
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-[#FFF3D5] hover:brightness-110 cursor-pointer"
+        >
+          <svg
+            className={`w-5 h-5 chevron-icon ${!collapsed ? 'rotated' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={3}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
       </div>
-      {!collapsed && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="font-label-md font-bold text-sm">{dict.fields.name}</label>
-            <input {...register('personalInfo.name', { required: dict.validation.required })} className="retro-input p-3 w-full" />
-            {e?.name && <p className="text-xs text-red-700 font-bold">{e.name.message as string}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="font-label-md font-bold text-sm">{dict.fields.email}</label>
-            <input type="email" {...register('personalInfo.email', { required: dict.validation.required })} className="retro-input p-3 w-full" />
-            {e?.email && <p className="text-xs text-red-700 font-bold">{e.email.message as string}</p>}
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="font-label-md font-bold text-sm">{dict.fields.phone}</label>
-            <input {...register('personalInfo.phone', { required: dict.validation.required })} className="retro-input p-3 w-full" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="font-label-md font-bold text-sm">{dict.fields.location}</label>
-            <input {...register('personalInfo.location', { required: dict.validation.required })} className="retro-input p-3 w-full" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="font-label-md font-bold text-sm">{dict.fields.linkedin}</label>
-            <input {...register('personalInfo.linkedin')} className="retro-input p-3 w-full" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="font-label-md font-bold text-sm">{dict.fields.website}</label>
-            <input {...register('personalInfo.website')} className="retro-input p-3 w-full" />
+      <div className={`section-collapse ${!collapsed ? 'open' : ''}`}>
+        <div>
+          <div className="section-body rounded-b-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="px-label">{dict.fields.name}</label>
+                <input
+                  {...register("personalInfo.name", {
+                    required: dict.validation.required,
+                  })}
+                  className="px-input"
+                />
+                {e?.name && (
+                  <p className="text-xs text-red-700 font-bold mt-0.5">
+                    {e.name.message as string}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="px-label">{dict.fields.email}</label>
+                <input
+                  type="email"
+                  {...register("personalInfo.email", {
+                    required: dict.validation.required,
+                  })}
+                  className="px-input"
+                />
+                {e?.email && (
+                  <p className="text-xs text-red-700 font-bold mt-0.5">
+                    {e.email.message as string}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label className="px-label">{dict.fields.phone}</label>
+                <input
+                  {...register("personalInfo.phone", {
+                    required: dict.validation.required,
+                  })}
+                  className="px-input"
+                />
+              </div>
+              <div>
+                <label className="px-label">{dict.fields.location}</label>
+                <input
+                  {...register("personalInfo.location", {
+                    required: dict.validation.required,
+                  })}
+                  className="px-input"
+                />
+              </div>
+              <div>
+                <label className="px-label">{dict.fields.linkedin}</label>
+                <input
+                  {...register("personalInfo.linkedin")}
+                  className="px-input"
+                />
+              </div>
+              <div>
+                <label className="px-label">{dict.fields.website}</label>
+                <input
+                  {...register("personalInfo.website")}
+                  className="px-input"
+                />
+              </div>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

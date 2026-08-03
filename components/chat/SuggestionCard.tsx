@@ -33,14 +33,14 @@ export function SuggestionCard({
   if (status === 'unavailable') statusBadge = dictUnavailable;
 
   return (
-    <div className="border-2 border-black rounded-lg overflow-hidden bg-white">
-      <div className="bg-surface-variant px-3 py-2 border-b border-outline/30">
-        <span className="text-xs text-on-surface font-label-md font-bold">{label}</span>
+    <div className="border-2 border-[#06132E] rounded-lg overflow-hidden bg-[#FFF3D5]">
+      <div className="bg-[#0E4A57] px-3 py-1.5 border-b border-[#06132E] flex items-center">
+        <span className="text-xs text-[#FFF3D5] font-label-md font-bold">{label}</span>
         {statusBadge && (
-          <span className={`ml-2 text-xs px-2 py-0.5 rounded-full font-label-md ${
-            status === 'applied' ? 'bg-green-200 text-green-800' :
+          <span className={`ml-2 text-[10px] px-2 py-0.5 rounded-full font-label-md ${
+            status === 'applied' ? 'bg-[#2AB7C9]/40 text-[#2AB7C9] border border-[#2AB7C9]/60' :
             status === 'dismissed' ? 'bg-gray-200 text-gray-600' :
-            'bg-yellow-100 text-yellow-700'
+            'bg-[#FFC329]/30 text-[#FFC329] border border-[#FFC329]/60'
           }`}>
             {statusBadge}
           </span>
@@ -49,43 +49,44 @@ export function SuggestionCard({
 
       <div className="px-3 py-2 space-y-2">
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-gray-500 font-label-md">
+          <span className="text-[10px] uppercase tracking-wider text-[#06132E]/60 font-label-md">
             {label.includes('(ES)') ? 'Actual' : label.includes('(EN)') ? 'Current' : ''}
           </span>
-          <p className="text-sm text-black line-through opacity-60 font-mono bg-red-50/50 rounded p-2 border border-red-200">
+          <p className="text-sm text-[#06132E] line-through opacity-60 font-mono bg-red-50/50 rounded p-2 border border-red-200">
             {suggestion.current}
           </p>
         </div>
 
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-gray-500 font-label-md">
+          <span className="text-[10px] uppercase tracking-wider text-[#06132E]/60 font-label-md">
             {label.includes('(ES)') ? 'Propuesta' : label.includes('(EN)') ? 'Proposed' : ''}
           </span>
-          <p className="text-sm text-black bg-green-50/50 rounded p-2 border border-green-200 font-mono">
+          <p className="text-sm text-[#06132E] bg-green-50/50 rounded p-2 border border-green-200 font-mono">
             {suggestion.proposed}
           </p>
         </div>
 
         {suggestion.rationale && (
-          <p className="text-xs text-gray-600 italic">
+          <p className="text-xs text-[#06132E]/70 italic">
             {suggestion.rationale}
           </p>
         )}
       </div>
 
       {status === 'pending' && (
-        <div className="px-3 py-2 border-t border-outline/20 flex gap-2 justify-end">
+        <div className="px-3 py-2 border-t border-[#06132E]/20 flex gap-2 justify-end">
           <button
             type="button"
             onClick={() => onDismiss(suggestion.id)}
-            className="px-3 py-1 text-xs text-gray-600 bg-surface-variant/30 rounded-full font-label-md hover:bg-surface-variant/50 transition-colors cursor-pointer"
+            className="px-3 py-1 text-xs border border-[#06132E]/40 rounded-full font-label-md hover:bg-[#06132E]/10 transition-colors cursor-pointer"
+            style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#06132E' }}
           >
             {dictDismiss}
           </button>
           <button
             type="button"
             onClick={() => onApply(suggestion)}
-            className="px-3 py-1 text-xs text-white bg-primary rounded-full font-label-md font-bold hover:opacity-90 transition-opacity cursor-pointer"
+            className="px-btn-add text-xs"
           >
             {dictApply}
           </button>

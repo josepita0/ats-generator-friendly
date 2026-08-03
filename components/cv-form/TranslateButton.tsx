@@ -8,11 +8,12 @@ interface Props {
   onTranslate: (data: CVData) => void;
   dict: Dictionary;
   getCvData: () => CVData;
+  compact?: boolean;
 }
 
 type TranslateState = 'idle' | 'translating' | 'success' | 'error';
 
-export function TranslateButton({ onTranslate, dict, getCvData }: Props) {
+export function TranslateButton({ onTranslate, dict, getCvData, compact = false }: Props) {
   const [state, setState] = useState<TranslateState>('idle');
   const [error, setError] = useState('');
   const [direction, setDirection] = useState<'es-to-en' | 'en-to-es'>('es-to-en');
@@ -58,9 +59,40 @@ export function TranslateButton({ onTranslate, dict, getCvData }: Props) {
       case 'error':
         return dict.translate.tryAgain;
       default:
-        return dict.translate.button;
+        return 'TRANSLATE';
     }
   };
+
+  if (compact) {
+    return (
+      <div className="relative flex items-center gap-2">
+        <select
+          value={direction}
+          onChange={(e) => setDirection(e.target.value as 'es-to-en' | 'en-to-es')}
+          disabled={state === 'translating'}
+          className="px-input w-auto text-xs py-1 px-2"
+          style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '0.55rem' }}
+        >
+          <option value="es-to-en">ES→EN</option>
+          <option value="en-to-es">EN→ES</option>
+        </select>
+        <button
+          type="button"
+          onClick={handleTranslate}
+          disabled={state === 'translating'}
+          className="px-btn-teal flex items-center gap-1.5"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m0 4l-3 6m0 0l-3-6m3 6h6m-4 8l4-8m0 0l4 8" />
+          </svg>
+          {getButtonText()}
+        </button>
+        {state === 'error' && (
+          <p className="absolute top-full left-0 mt-1 text-[10px] text-red-400 font-label-md whitespace-nowrap">{error}</p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-4">

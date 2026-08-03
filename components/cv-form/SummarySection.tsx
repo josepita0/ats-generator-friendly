@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { CVData } from '@/types/cv';
-import { Dictionary } from '@/lib/i18n/dictionaries';
+import { useState } from "react";
+import { useFormContext } from "react-hook-form";
+import { CVData } from "@/types/cv";
+import { Dictionary } from "@/lib/i18n/dictionaries";
 
 interface Props {
   dict: Dictionary;
@@ -14,30 +14,58 @@ export function SummarySection({ dict }: Props) {
   const [collapsed, setCollapsed] = useState(true);
 
   return (
-    <div className="retro-card bg-[#f7e068] p-8 text-black relative z-40 translate-x-2">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="font-headline-md text-2xl font-black uppercase tracking-wide flex items-center gap-3">
-          <span className="text-3xl">✏️</span>
+    <div className="section-card">
+      <div className="section-header rounded-t-lg">
+        <div className="section-header-title">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+          </svg>
           {dict.form.summary}
-        </h3>
-        <button type="button" onClick={() => setCollapsed(!collapsed)} className="cursor-pointer hover:scale-110 transition-transform">
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d={collapsed ? "M19 9l-7 7-7-7" : "M5 15l7-7 7 7"} />
+        </div>
+        <button
+          type="button"
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-[#FFF3D5] hover:brightness-110 cursor-pointer"
+        >
+          <svg
+            className={`w-5 h-5 chevron-icon ${!collapsed ? 'rotated' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={3}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
       </div>
-      {!collapsed && (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="font-label-md font-bold text-sm">{dict.fields.summaryEs}</label>
-            <textarea {...register('summary.es', { required: dict.validation.required })} rows={3} className="retro-input p-3 w-full resize-none" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="font-label-md font-bold text-sm">{dict.fields.summaryEn}</label>
-            <textarea {...register('summary.en')} rows={3} className="retro-input p-3 w-full resize-none" />
+      <div className={`section-collapse ${!collapsed ? 'open' : ''}`}>
+        <div>
+          <div className="section-body space-y-4 rounded-b-lg">
+            <div>
+              <label className="px-label">{dict.fields.summaryEs}</label>
+              <textarea
+                {...register("summary.es", {
+                  required: dict.validation.required,
+                })}
+                rows={3}
+                className="px-input resize-none"
+              />
+            </div>
+            <div>
+              <label className="px-label">{dict.fields.summaryEn}</label>
+              <textarea
+                {...register("summary.en")}
+                rows={3}
+                className="px-input resize-none"
+              />
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
