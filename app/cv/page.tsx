@@ -71,6 +71,7 @@ export default function CVPage() {
   const [lang, setLang] = useState<"es" | "en">("es");
   const [jobDescription, setJobDescription] = useState("");
   const [activeTab, setActiveTab] = useState<MobileTab>("editor");
+  const [collapseAll, setCollapseAll] = useState<boolean | null>(null);
 
   const methods = useForm<CVData>({
     resolver: zodResolver(cvDataSchema),
@@ -169,13 +170,36 @@ export default function CVPage() {
 
   const renderEditorContent = () => (
     <div className="flex flex-col gap-3">
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={() => setCollapseAll(collapseAll ? null : true)}
+          className="px-btn-small bg-surface-variant text-[#FFF3D5] flex items-center gap-1"
+        >
+          {collapseAll ? (
+            <>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+              Expand All
+            </>
+          ) : (
+            <>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              Collapse All
+            </>
+          )}
+        </button>
+      </div>
       <FormProvider {...methods}>
-        <PersonalInfoSection dict={dict} />
-        <SummarySection dict={dict} />
-        <ExperienceSection dict={dict} />
-        <EducationSection dict={dict} />
-        <SkillsSection dict={dict} />
-        <LanguagesSection dict={dict} />
+        <PersonalInfoSection dict={dict} forceCollapsed={collapseAll} />
+        <SummarySection dict={dict} forceCollapsed={collapseAll} />
+        <ExperienceSection dict={dict} forceCollapsed={collapseAll} />
+        <EducationSection dict={dict} forceCollapsed={collapseAll} />
+        <SkillsSection dict={dict} forceCollapsed={collapseAll} />
+        <LanguagesSection dict={dict} forceCollapsed={collapseAll} />
       </FormProvider>
 
       <form
@@ -395,13 +419,36 @@ export default function CVPage() {
 
             <div className="p-5 grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-5">
               <div className="pixel-panel  rounded-[10px] p-4 max-h-[calc(100vh-180px)] overflow-y-auto px-scroll flex flex-col gap-4">
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setCollapseAll(collapseAll ? null : true)}
+                    className="px-btn-small bg-surface-variant text-[#FFF3D5] flex items-center gap-1"
+                  >
+                    {collapseAll ? (
+                      <>
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                        Expand All
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        Collapse All
+                      </>
+                    )}
+                  </button>
+                </div>
                 <FormProvider {...methods}>
-                  <PersonalInfoSection dict={dict} />
-                  <SummarySection dict={dict} />
-                  <ExperienceSection dict={dict} />
-                  <EducationSection dict={dict} />
-                  <SkillsSection dict={dict} />
-                  <LanguagesSection dict={dict} />
+                  <PersonalInfoSection dict={dict} forceCollapsed={collapseAll} />
+                  <SummarySection dict={dict} forceCollapsed={collapseAll} />
+                  <ExperienceSection dict={dict} forceCollapsed={collapseAll} />
+                  <EducationSection dict={dict} forceCollapsed={collapseAll} />
+                  <SkillsSection dict={dict} forceCollapsed={collapseAll} />
+                  <LanguagesSection dict={dict} forceCollapsed={collapseAll} />
                 </FormProvider>
 
                 <form

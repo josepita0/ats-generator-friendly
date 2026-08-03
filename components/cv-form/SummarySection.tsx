@@ -7,11 +7,13 @@ import { Dictionary } from "@/lib/i18n/dictionaries";
 
 interface Props {
   dict: Dictionary;
+  forceCollapsed?: boolean | null;
 }
 
-export function SummarySection({ dict }: Props) {
+export function SummarySection({ dict, forceCollapsed }: Props) {
   const { register } = useFormContext<CVData>();
   const [collapsed, setCollapsed] = useState(true);
+  const effectiveCollapsed = forceCollapsed ?? collapsed;
 
   return (
     <div className="section-card">
@@ -24,11 +26,11 @@ export function SummarySection({ dict }: Props) {
         </div>
         <button
           type="button"
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => setCollapsed(!effectiveCollapsed)}
           className="text-[#FFF3D5] hover:brightness-110 cursor-pointer"
         >
           <svg
-            className={`w-5 h-5 chevron-icon ${!collapsed ? 'rotated' : ''}`}
+            className={`w-5 h-5 chevron-icon ${!effectiveCollapsed ? 'rotated' : ''}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -42,7 +44,7 @@ export function SummarySection({ dict }: Props) {
           </svg>
         </button>
       </div>
-      <div className={`section-collapse ${!collapsed ? 'open' : ''}`}>
+      <div className={`section-collapse ${!effectiveCollapsed ? 'open' : ''}`}>
         <div>
           <div className="section-body space-y-4 rounded-b-lg">
             <div>
