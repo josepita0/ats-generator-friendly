@@ -5,10 +5,13 @@ import dynamic from 'next/dynamic';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CVData } from '@/types/cv';
+import { Suggestion } from '@/types/chat';
 import { cvDataSchema } from '@/lib/cv/schemas';
 import { createEmptyCVData } from '@/lib/cv/defaults';
 import { replaceBulletInDescriptions } from '@/lib/cv/descriptions';
 import { loadCVData, saveCVData } from '@/lib/storage';
+import { ChatSection } from '@/components/chat';
+import { CoverLetterSection } from '@/components/cover-letter';
 import { es, en, Dictionary } from '@/lib/i18n/dictionaries';
 import {
   PersonalInfoSection,
@@ -54,6 +57,7 @@ export default function CVPage() {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState<CVData | null>(null);
   const [lang, setLang] = useState<'es' | 'en'>('es');
+  const [jobDescription, setJobDescription] = useState('');
 
   const methods = useForm<CVData>({
     resolver: zodResolver(cvDataSchema),
@@ -112,6 +116,13 @@ export default function CVPage() {
     });
   };
 
+  const handleApplyChatSuggestion = (_suggestion: Suggestion, updatedCv: CVData) => {
+    Object.entries(updatedCv).forEach(([key, value]) => {
+      setValue(key as keyof CVData, value);
+    });
+    saveCVData(updatedCv);
+  };
+
   if (!mounted) {
     return (
       <div className="bg-pattern min-h-screen flex items-center justify-center">
@@ -166,6 +177,22 @@ export default function CVPage() {
               />
             </div>
           </div>
+
+          <ChatSection
+            dict={dict}
+            getCvData={() => getValues()}
+            onApplySuggestion={handleApplyChatSuggestion}
+            language={lang}
+            jobDescription={jobDescription}
+            onJobDescriptionChange={setJobDescription}
+          />
+
+          <CoverLetterSection
+            dict={dict}
+            getCvData={() => getValues()}
+            jobDescription={jobDescription}
+            language={lang}
+          />
 
           <FormProvider {...methods}>
             <PersonalInfoSection dict={dict} />

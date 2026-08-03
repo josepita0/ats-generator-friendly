@@ -1,6 +1,6 @@
 # AI Features
 
-The CV generator includes AI-powered features to help you improve your resume. These features are **optional** and require an OpenAI API key.
+The CV generator includes AI-powered features to help you improve your resume. These features are **optional** and require a Gemini API key.
 
 ## Available Features
 
@@ -19,20 +19,44 @@ Get suggestions to improve bullet points and descriptions with:
 
 **Endpoint:** `POST /api/ai/improve`
 
+### 3. CV Translation (ES ↔ EN)
+
+Professional translation of summary, experience, and education content between Spanish and English.
+
+**Endpoint:** `POST /api/ai/translate`
+
+### 4. AI Chat — Job-Posting Adaptation
+
+Chat with an AI assistant to adapt your CV to a specific job posting. Suggestions are advisory — you review and approve every change before it's applied.
+
+**Endpoint:** `POST /api/ai/chat`
+
+### 5. Cover Letter Generator
+
+Generate a formal, natural-sounding cover letter from your CV data and the job description. The letter is editable and can be downloaded as an ATS-friendly PDF.
+
+**Endpoint:** `POST /api/ai/cover-letter`
+
+Features:
+- Paste a job description and ask the AI to adapt your CV
+- Get concrete, field-level suggestions with rationale
+- Review and apply/dismiss each suggestion individually
+- Conversational advice on how to improve your resume
+
 ## Setup
 
-### 1. Get an OpenAI API Key
+### 1. Get a Gemini API Key
 
-1. Go to https://platform.openai.com/api-keys
+1. Go to https://aistudio.google.com/apikey
 2. Create a new API key
-3. Copy the key (starts with `sk-`)
+3. Copy the key
 
 ### 2. Configure the Environment
 
 Create a `.env.local` file in the project root:
 
 ```bash
-OPENAI_API_KEY=sk-your-key-here
+GOOGLE_API_KEY=your-key-here
 ```
 
 ### 3. Restart the Development Server
@@ -43,14 +67,17 @@ npm run dev
 
 ## Cost
 
-Using OpenAI API is paid per token. Estimated costs:
+Using Gemini API with `gemini-3.6-flash` is free tier friendly. Estimated tokens per request:
 
 | Feature | Model | Tokens (approx.) |
 |---------|-------|------------------|
-| PDF Import | gpt-4o-mini | ~2,000-5,000 |
-| Writing Improvement | gpt-4o-mini | ~200-500 |
+| PDF Import | gemini-3.6-flash | ~3,000-5,000 |
+| Writing Improvement | gemini-3.6-flash | ~200-500 |
+| CV Translation | gemini-3.6-flash | ~2,000-4,000 |
+| AI Chat | gemini-3.6-flash | ~3,000-6,000 |
+| Cover Letter | gemini-3.6-flash | ~2,000-4,000 |
 
-For personal use, costs should be minimal (less than $0.01 per CV).
+For personal use, costs should be minimal.
 
 ## Without AI
 
@@ -62,6 +89,8 @@ All core features work without AI:
 AI is only needed for:
 - Automatic PDF import
 - Writing improvement suggestions
+- CV translation
+- Job-posting adaptation chat
 
 ## Troubleshooting
 
@@ -69,12 +98,12 @@ AI is only needed for:
 
 Make sure:
 1. `.env.local` file exists
-2. `OPENAI_API_KEY` is set correctly
-3. The key is valid and has available credits
+2. `GOOGLE_API_KEY` is set correctly
+3. The key is valid and has available quota
 
 ### API errors
 
-Check your OpenAI dashboard for:
+Check your Google AI Studio dashboard for:
 - API key validity
-- Available credits
+- Available quota
 - Usage limits
