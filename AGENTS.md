@@ -1,14 +1,14 @@
 <!-- BEGIN:nextjs-agent-rules -->
+
 # AGENTS.md — ATS-Friendly Resume Generator
 
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 
-
 ## Purpose
 
-Instructions for AI coding agents (Claude Code, Cursor, ChatGPT, etc.) working in this repository.
+Instructions for AI coding agents (Cursor, ChatGPT, etc.) working in this repository.
 
 Read this file completely before generating, modifying, or deleting code.
 
@@ -22,12 +22,12 @@ Personal-use application to build an ATS-friendly resume in **Spanish and Englis
 
 This is **not** a commercial SaaS product.
 
-* No authentication
-* No database
-* No server-side persistence
-* No multi-user support
-* No roles or permissions
-* All state lives in the browser (React state + optional localStorage)
+- No authentication
+- No database
+- No server-side persistence
+- No multi-user support
+- No roles or permissions
+- All state lives in the browser (React state + optional localStorage)
 
 **Core principle:** prioritize simplicity over scalability.
 
@@ -46,17 +46,17 @@ Only use the technologies listed below unless the user explicitly approves a cha
 | State       | useState / useReducer             |
 | Validation  | react-hook-form + zod             |
 | PDF         | @react-pdf/renderer               |
-| AI          | Claude API via Next.js API Routes |
+| AI          | GEMINI API via Next.js API Routes |
 | Hosting     | Vercel (free tier)                |
 | Persistence | localStorage (optional)           |
 
 ### Hard rules
 
-* PDF generation must be **100% client-side** using `@react-pdf/renderer`.
-* Do not use Puppeteer, Playwright, WeasyPrint, or any HTML→PDF headless browser solution.
-* Claude API keys must never be exposed to the client.
-* All AI requests must go through `/app/api/*`.
-* Do not add a separate backend, database, auth provider, or external storage service.
+- PDF generation must be **100% client-side** using `@react-pdf/renderer`.
+- Do not use Puppeteer, Playwright, WeasyPrint, or any HTML→PDF headless browser solution.
+- GEMINI API keys must never be exposed to the client.
+- All AI requests must go through `/app/api/*`.
+- Do not add a separate backend, database, auth provider, or external storage service.
 
 ---
 
@@ -91,11 +91,11 @@ Expected structure:
 
 ### Separation of concerns
 
-* **Form** = user input
-* **Preview** = browser rendering
-* **PDF** = react-pdf document
-* **AI** = prompts, parsing, validation
-* **Types** = shared data model
+- **Form** = user input
+- **Preview** = browser rendering
+- **PDF** = react-pdf document
+- **AI** = prompts, parsing, validation
+- **Types** = shared data model
 
 Do not share JSX between form, preview, and PDF layers.
 
@@ -111,30 +111,30 @@ The resume structure is defined exclusively in:
 
 A central `CVData` type must drive:
 
-* Form state
-* On-screen preview
-* PDF document
-* AI payloads
+- Form state
+- On-screen preview
+- PDF document
+- AI payloads
 
 ### Language model
 
 Free-text fields must support:
 
-* `es`
-* `en`
+- `es`
+- `en`
 
 Examples:
 
-* Summary
-* Experience descriptions
-* Achievements
+- Summary
+- Experience descriptions
+- Achievements
 
 Structural fields are **not translated**:
 
-* Name
-* Company
-* Dates
-* Locations
+- Name
+- Company
+- Dates
+- Locations
 
 When adding a field:
 
@@ -153,31 +153,31 @@ Every PDF must satisfy these requirements:
 
 ### Layout
 
-* Single column only
-* Linear top-to-bottom reading order
-* No tables for main content
-* No multi-column sections
+- Single column only
+- Linear top-to-bottom reading order
+- No tables for main content
+- No multi-column sections
 
 ### Visuals
 
-* No images
-* No icons conveying information
-* No charts or skill bars
-* No decorative graphics
+- No images
+- No icons conveying information
+- No charts or skill bars
+- No decorative graphics
 
 ### Typography
 
-* Use standard fonts (Helvetica, Arial, Times)
-* Use consistent section headings
-* Use a consistent date format (`MM/YYYY`)
+- Use standard fonts (Helvetica, Arial, Times)
+- Use consistent section headings
+- Use a consistent date format (`MM/YYYY`)
 
 ### Text extraction
 
 The PDF must remain:
 
-* Selectable
-* Copyable
-* Machine-readable
+- Selectable
+- Copyable
+- Machine-readable
 
 Never rasterize text.
 
@@ -189,7 +189,7 @@ If aesthetics conflict with ATS compliance, choose ATS compliance.
 
 ### API location
 
-All Claude calls must live under:
+All GEMINI calls must live under:
 
 ```text
 /app/api/ai/*
@@ -197,8 +197,8 @@ All Claude calls must live under:
 
 ### Security
 
-* API keys stay server-side only.
-* Never call Claude directly from a client component.
+- API keys stay server-side only.
+- Never call GEMINI directly from a client component.
 
 ### Structured outputs
 
@@ -216,10 +216,10 @@ Do not auto-fill the resume with unvalidated free text.
 
 Improve existing bullets by suggesting:
 
-* Stronger action verbs
-* Quantification
-* Conciseness
-* Clarity
+- Stronger action verbs
+- Quantification
+- Conciseness
+- Clarity
 
 #### 2. ES ↔ EN professional adaptation
 
@@ -229,9 +229,9 @@ Translate with professional context, not literal word-for-word translation.
 
 Given a job description and `CVData`, suggest:
 
-* Relevant experiences to emphasize
-* Relevant skills to surface
-* Keywords to incorporate
+- Relevant experiences to emphasize
+- Relevant skills to surface
+- Keywords to incorporate
 
 ### Critical rule
 
@@ -249,21 +249,21 @@ The user must be able to review, edit, accept, or reject every suggestion before
 
 ### TypeScript
 
-* `strict: true`
-* Avoid `any`
-* If `any` is unavoidable, add a justification comment.
+- `strict: true`
+- Avoid `any`
+- If `any` is unavoidable, add a justification comment.
 
 ### Components
 
-* Keep components small and focused.
-* Split components that grow beyond ~150 lines.
+- Keep components small and focused.
+- Split components that grow beyond ~150 lines.
 
 ### Naming
 
-* Components: `PascalCase`
-* Hooks: `useCamelCase`
-* Types/interfaces: `PascalCase`
-* Utility functions: `camelCase`
+- Components: `PascalCase`
+- Hooks: `useCamelCase`
+- Types/interfaces: `PascalCase`
+- Utility functions: `camelCase`
 
 ### Business logic
 
@@ -271,17 +271,17 @@ Keep business logic out of UI components.
 
 Place it in:
 
-* `/lib/cv`
-* `/lib/ai`
-* `/lib/i18n`
+- `/lib/cv`
+- `/lib/ai`
+- `/lib/i18n`
 
 ### Comments
 
 Comment:
 
-* ATS-specific decisions
-* Non-obvious tradeoffs
-* Security-related constraints
+- ATS-specific decisions
+- Non-obvious tradeoffs
+- Security-related constraints
 
 Do not comment obvious JSX or simple assignments.
 
@@ -293,10 +293,10 @@ Before adding a package, verify that React, Next.js, Tailwind, or existing utili
 
 Provide:
 
-* Proper labels
-* Keyboard navigation
-* Logical tab order
-* Accessible form controls
+- Proper labels
+- Keyboard navigation
+- Logical tab order
+- Accessible form controls
 
 ---
 
@@ -318,14 +318,14 @@ Prefer extending existing modules over creating new abstractions.
 
 ## Never do these things
 
-* Implement authentication
-* Add user sessions
-* Create database models or ORMs
-* Add Supabase/Firebase/S3 storage
-* Introduce Redux, Zustand, or other global state libraries without explicit approval
-* Generate PDFs server-side
-* Expose Claude credentials in client code
-* Over-engineer simple state flows
+- Implement authentication
+- Add user sessions
+- Create database models or ORMs
+- Add Supabase/Firebase/S3 storage
+- Introduce Redux, Zustand, or other global state libraries without explicit approval
+- Generate PDFs server-side
+- Expose GEMINI credentials in client code
+- Over-engineer simple state flows
 
 ---
 
@@ -367,14 +367,14 @@ npm run build
 
 Before marking a feature as complete, verify:
 
-* [ ] The PDF is still single-column and ATS-friendly.
-* [ ] PDF text remains selectable and copyable.
-* [ ] `CVData` is still the single source of truth.
-* [ ] No Claude API key is exposed to the client.
-* [ ] No unapproved dependency or external service was added.
-* [ ] Spanish and English content are handled correctly.
-* [ ] Structural fields are not incorrectly translated.
-* [ ] AI suggestions require user approval before applying.
+- [ ] The PDF is still single-column and ATS-friendly.
+- [ ] PDF text remains selectable and copyable.
+- [ ] `CVData` is still the single source of truth.
+- [ ] No GEMINI API key is exposed to the client.
+- [ ] No unapproved dependency or external service was added.
+- [ ] Spanish and English content are handled correctly.
+- [ ] Structural fields are not incorrectly translated.
+- [ ] AI suggestions require user approval before applying.
 
 ---
 
@@ -390,6 +390,5 @@ When multiple implementations are possible, choose in this order:
 6. Performance optimization only when necessary
 
 This document is the authoritative guide for AI agents working on this repository.
-
 
 <!-- END:nextjs-agent-rules -->
