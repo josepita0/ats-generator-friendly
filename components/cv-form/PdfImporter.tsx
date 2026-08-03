@@ -9,11 +9,12 @@ interface Props {
   onImport: (data: CVData) => void;
   dict: Dictionary;
   compact?: boolean;
+  mobile?: boolean;
 }
 
 type ImportState = 'idle' | 'extracting' | 'parsing' | 'success' | 'error';
 
-export function PdfImporter({ onImport, dict, compact = false }: Props) {
+export function PdfImporter({ onImport, dict, compact = false, mobile = false }: Props) {
   const [state, setState] = useState<ImportState>('idle');
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,6 +74,30 @@ export function PdfImporter({ onImport, dict, compact = false }: Props) {
   };
 
   const isDisabled = state === 'extracting' || state === 'parsing';
+
+  if (mobile) {
+    return (
+      <div className="relative">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isDisabled}
+          className="px-btn-orange w-10 h-10 flex items-center justify-center p-0"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+        </button>
+      </div>
+    );
+  }
 
   if (compact) {
     return (

@@ -9,11 +9,12 @@ interface Props {
   dict: Dictionary;
   getCvData: () => CVData;
   compact?: boolean;
+  mobile?: boolean;
 }
 
 type TranslateState = 'idle' | 'translating' | 'success' | 'error';
 
-export function TranslateButton({ onTranslate, dict, getCvData, compact = false }: Props) {
+export function TranslateButton({ onTranslate, dict, getCvData, compact = false, mobile = false }: Props) {
   const [state, setState] = useState<TranslateState>('idle');
   const [error, setError] = useState('');
   const [direction, setDirection] = useState<'es-to-en' | 'en-to-es'>('es-to-en');
@@ -62,6 +63,21 @@ export function TranslateButton({ onTranslate, dict, getCvData, compact = false 
         return 'TRANSLATE';
     }
   };
+
+  if (mobile) {
+    return (
+      <button
+        type="button"
+        onClick={handleTranslate}
+        disabled={state === 'translating'}
+        className="px-btn-teal w-10 h-10 flex items-center justify-center p-0"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m0 4l-3 6m0 0l-3-6m3 6h6m-4 8l4-8m0 0l4 8" />
+        </svg>
+      </button>
+    );
+  }
 
   if (compact) {
     return (

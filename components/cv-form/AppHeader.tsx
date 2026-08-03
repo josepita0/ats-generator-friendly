@@ -3,9 +3,27 @@
 interface Props {
   importSlot: React.ReactNode;
   translateSlot: React.ReactNode;
+  mobile?: boolean;
 }
 
-export function AppHeader({ importSlot, translateSlot }: Props) {
+export function AppHeader({ importSlot, translateSlot, mobile = false }: Props) {
+  if (mobile) {
+    return (
+      <div className="pixel-header flex items-center justify-between px-4 h-[60px]">
+        <h1
+          className="font-headline-md text-[#FFC329] uppercase tracking-wider select-none leading-tight"
+          style={{ fontSize: '0.5rem', textShadow: '2px 2px 0 #06132E' }}
+        >
+          RETRO CV BUILDER
+        </h1>
+        <div className="flex items-center gap-2">
+          {importSlot}
+          {translateSlot}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pixel-header flex items-center justify-between px-6 h-[70px]">
       <div className="flex items-center gap-3">
