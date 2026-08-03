@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Sora, Inter, Space_Grotesk } from "next/font/google";
+import { Press_Start_2P, Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const sora = Sora({
+const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
-  variable: "--font-headline",
+  weight: "400",
+  variable: "--font-pixel",
   display: "swap",
 });
 
@@ -33,7 +34,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${sora.variable} ${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`dark ${pressStart2P.variable} ${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-on-background font-body-md">
         {children}
