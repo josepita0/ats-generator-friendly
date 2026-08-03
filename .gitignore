@@ -43,3 +43,6 @@ next-env.d.ts
 #envs
 .env
 .env.local
+
+# generated build artifacts
+/public/pdf.worker.min.mjs
