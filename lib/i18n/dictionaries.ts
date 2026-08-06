@@ -1,5 +1,9 @@
 export const es = {
   appName: 'CV Builder',
+  collapseAll: 'Colapsar todo',
+  expandAll: 'Expandir todo',
+  livePreview: 'Vista previa',
+  aiGreeting: 'Puedo ayudarte a mejorar la estructura y redacción de tu CV.',
   landing: {
     title: 'Crea tu CV optimizado para ATS',
     subtitle: 'Genera fácilmente un currículum que pasa los sistemas de seguimiento de candidatos',
@@ -136,6 +140,10 @@ export const es = {
 
 export const en = {
   appName: 'CV Builder',
+  collapseAll: 'Collapse All',
+  expandAll: 'Expand All',
+  livePreview: 'Live Preview',
+  aiGreeting: 'I can help improve your CV structure and wording.',
   landing: {
     title: 'Create your ATS-optimized resume',
     subtitle: 'Easily generate a resume that passes applicant tracking systems',
