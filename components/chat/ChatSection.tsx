@@ -25,6 +25,14 @@ export function ChatSection({ dict, getCvData, onApplySuggestion, language, jobD
   const [error, setError] = useState('');
   const [suggestionStatuses, setSuggestionStatuses] = useState<Record<string, SuggestionStatus>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const autoGrowTextarea = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -115,107 +123,111 @@ export function ChatSection({ dict, getCvData, onApplySuggestion, language, jobD
 
   if (compact) {
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowJobDesc(!showJobDesc)}
-            className={`px-pill text-[10px] ${showJobDesc ? 'bg-[#2AB7C9] text-[#06132E]' : ''}`}
-          >
-            {dict.chat.jobDescription}
-            {jobDescription ? ' ✓' : ''}
-          </button>
-        </div>
-
-        {showJobDesc && (
-          <div>
-            <textarea
-              value={jobDescription}
-              onChange={(e) => onJobDescriptionChange(e.target.value)}
-              placeholder={dict.chat.jobDescriptionPlaceholder}
-              rows={3}
-              className="px-input w-full text-xs resize-y"
-              aria-label={dict.chat.jobDescription}
-            />
+      <div className="flex flex-col flex-1 min-h-0">
+        <div className="flex-1 overflow-y-auto flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowJobDesc(!showJobDesc)}
+              className={`px-pill text-[10px] ${showJobDesc ? 'bg-[#2AB7C9] text-[#06132E]' : ''}`}
+            >
+              {dict.chat.jobDescription}
+              {jobDescription ? ' ✓' : ''}
+            </button>
           </div>
-        )}
 
-        {messages.length === 0 && !error && (
-          <div className="flex flex-wrap gap-1.5">
-            {(dict.chat.examples || []).map((example, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setInput(example)}
-                className="px-pill text-[10px]"
-              >
-                {example}
-              </button>
-            ))}
-          </div>
-        )}
+          {showJobDesc && (
+            <div>
+              <textarea
+                value={jobDescription}
+                onChange={(e) => onJobDescriptionChange(e.target.value)}
+                placeholder={dict.chat.jobDescriptionPlaceholder}
+                rows={3}
+                className="px-input w-full text-xs resize-y"
+                aria-label={dict.chat.jobDescription}
+              />
+            </div>
+          )}
 
-        <div className="border-2 border-[#06132E] rounded-lg bg-[#071539]/50 min-h-[100px] max-h-[250px] overflow-y-auto">
-          {messages.map((msg) => (
-            <div key={msg.id} className="p-2.5 border-b border-[#2AB7C9]/10 last:border-b-0">
-              <div className="flex items-start gap-2">
-                <span className={`text-[10px] font-label-md font-bold mt-0.5 shrink-0 ${
-                  msg.role === 'user' ? 'text-[#F86B2A]' : 'text-[#FFC329]'
-                }`}>
-                  {msg.role === 'user' ? dict.chat.you : dict.chat.ai}
-                </span>
-                <p className="text-xs text-[#FFF3D5] whitespace-pre-wrap">{msg.content}</p>
-              </div>
+          {messages.length === 0 && !error && (
+            <div className="flex flex-wrap gap-1.5">
+              {(dict.chat.examples || []).map((example, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setInput(example)}
+                  className="px-pill text-[10px]"
+                >
+                  {example}
+                </button>
+              ))}
+            </div>
+          )}
 
-              {msg.suggestions && msg.suggestions.length > 0 && (
-                <div className="mt-2.5 space-y-2">
-                  {msg.suggestions.map((sug) => (
-                    <SuggestionCard
-                      key={sug.id}
-                      suggestion={sug}
-                      label={suggestionLabel(sug.target, getCvData(), dict)}
-                      status={suggestionStatuses[sug.id] || 'pending'}
-                      onApply={handleApply}
-                      onDismiss={handleDismiss}
-                      dictApply={dict.chat.apply}
-                      dictDismiss={dict.chat.dismiss}
-                      dictApplied={dict.chat.applied}
-                      dictDismissed={dict.chat.dismissed}
-                      dictUnavailable={dict.chat.unavailable}
-                    />
-                  ))}
+          <div className="border-2 border-[#06132E] rounded-lg bg-[#071539]/50">
+            {messages.map((msg) => (
+              <div key={msg.id} className="p-2.5 border-b border-[#2AB7C9]/10 last:border-b-0">
+                <div className="flex items-start gap-2">
+                  <span className={`text-[10px] font-label-md font-bold mt-0.5 shrink-0 ${
+                    msg.role === 'user' ? 'text-[#F86B2A]' : 'text-[#FFC329]'
+                  }`}>
+                    {msg.role === 'user' ? dict.chat.you : dict.chat.ai}
+                  </span>
+                  <p className="text-xs text-[#FFF3D5] whitespace-pre-wrap">{msg.content}</p>
                 </div>
-              )}
-            </div>
-          ))}
 
-          {error && (
-            <div className="p-2.5">
-              <p className="text-xs text-red-400 font-label-md">{error}</p>
-            </div>
-          )}
+                {msg.suggestions && msg.suggestions.length > 0 && (
+                  <div className="mt-2.5 space-y-2">
+                    {msg.suggestions.map((sug) => (
+                      <SuggestionCard
+                        key={sug.id}
+                        suggestion={sug}
+                        label={suggestionLabel(sug.target, getCvData(), dict)}
+                        status={suggestionStatuses[sug.id] || 'pending'}
+                        onApply={handleApply}
+                        onDismiss={handleDismiss}
+                        dictApply={dict.chat.apply}
+                        dictDismiss={dict.chat.dismiss}
+                        dictApplied={dict.chat.applied}
+                        dictDismissed={dict.chat.dismissed}
+                        dictUnavailable={dict.chat.unavailable}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
 
-          {sending && (
-            <div className="p-2.5 flex items-center gap-2">
-              <span className="text-[10px] font-label-md font-bold text-[#FFC329]">{dict.chat.ai}</span>
-              <span className="text-xs text-[#FFF3D5] animate-pulse">{dict.chat.thinking}</span>
-            </div>
-          )}
+            {error && (
+              <div className="p-2.5">
+                <p className="text-xs text-red-400 font-label-md">{error}</p>
+              </div>
+            )}
 
-          <div ref={messagesEndRef} />
+            {sending && (
+              <div className="p-2.5 flex items-center gap-2">
+                <span className="text-[10px] font-label-md font-bold text-[#FFC329]">{dict.chat.ai}</span>
+                <span className="text-xs text-[#FFF3D5] animate-pulse">{dict.chat.thinking}</span>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex-shrink-0 flex gap-2 pt-2 border-t border-[#2AB7C9]/20">
           <textarea
+            ref={textareaRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => { setInput(e.target.value); autoGrowTextarea(); }}
+            onInput={autoGrowTextarea}
             onKeyDown={handleKeyDown}
             placeholder={dict.chat.placeholder}
             rows={2}
             disabled={sending}
             className="px-input flex-1 text-xs resize-none"
             aria-label={dict.chat.placeholder}
-            style={{ fontFamily: "'Inter', sans-serif" }}
+            style={{ fontFamily: "'Inter', sans-serif", maxHeight: '120px' }}
           />
           <button
             type="button"
@@ -223,7 +235,7 @@ export function ChatSection({ dict, getCvData, onApplySuggestion, language, jobD
             disabled={sending || !input.trim()}
             className="px-btn-orange shrink-0 text-xs py-1 px-3"
           >
-            {sending ? '...' : 'ASK AI'}
+            {sending ? '...' : dict.chat.send}
           </button>
         </div>
       </div>
