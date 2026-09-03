@@ -16,7 +16,6 @@
   "dependencies": {
     "@google/genai": "^2.13.0",
     "@hookform/resolvers": "^5.4.0",
-    "@opencode-ai/sdk": "^1.18.4",
     "@react-pdf/renderer": "^4.5.1",
     "next": "16.2.10",
     "pdfjs-dist": "6.1.200",
