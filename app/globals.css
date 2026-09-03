@@ -160,7 +160,7 @@
 .section-card {
   border: 2px solid #06132e;
   border-radius: 10px;
-  margin-bottom: rem;
+  margin-bottom: 1rem;
 }
 
 .section-body {
@@ -593,78 +593,4 @@
   gap: 0.75rem;
 }
 
-.floating-preview-btn {
-  position: fixed;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #2AB7C9 0%, #1F9BAA 100%);
-  border: 3px solid #F86B2A;
-  box-shadow: 3px 3px 0 0 #06132E;
-  z-index: 70;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
-}
-.floating-preview-btn:hover {
-  transform: translateY(-50%) scale(1.05);
-  box-shadow: 4px 4px 0 0 #06132E;
-  filter: brightness(1.1);
-}
 
-.preview-sheet-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(6, 19, 46, 0.7);
-  z-index: 75;
-  transition: opacity 0.3s ease;
-}
-.preview-sheet-overlay.closed {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.preview-sheet {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 85%;
-  background: #071539;
-  border-top: 4px solid #2AB7C9;
-  z-index: 80;
-  flex-direction: column;
-  transform: translateY(0);
-  transition: transform 0.3s ease;
-}
-.preview-sheet.closed {
-  transform: translateY(100%);
-}
-
-.preview-sheet-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 1rem;
-  border-bottom: 2px solid #06132E;
-  background: #0E4A57;
-  flex-shrink: 0;
-  gap: 0.5rem;
-}
-
-.preview-sheet-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0.5rem;
-}
-
-.preview-sheet-footer {
-  flex-shrink: 0;
-  padding: 0.75rem 1rem;
-  border-top: 2px solid #06132E;
-  background: #0E4A57;
-}
