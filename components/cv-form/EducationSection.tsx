@@ -137,6 +137,7 @@ export function EducationSection({ dict, forceCollapsed }: Props) {
                         onChange={f.onChange}
                         onBlur={f.onBlur}
                         name={f.name}
+                        dict={dict}
                       />
                     )}
                   />
@@ -152,6 +153,7 @@ export function EducationSection({ dict, forceCollapsed }: Props) {
                         onChange={f.onChange}
                         onBlur={f.onBlur}
                         name={f.name}
+                        dict={dict}
                       />
                     )}
                   />

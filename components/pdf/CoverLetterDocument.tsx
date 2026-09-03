@@ -1,15 +1,8 @@
 'use client';
 
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import type { PersonalInfo } from '@/types/cv';
 import type { Dictionary } from '@/lib/i18n/dictionaries';
-
-Font.register({
-  family: 'Helvetica',
-  fonts: [
-    { src: 'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf' },
-  ],
-});
 
 const styles = StyleSheet.create({
   page: {

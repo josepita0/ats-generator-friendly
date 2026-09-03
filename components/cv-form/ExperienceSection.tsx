@@ -132,6 +132,7 @@ export function ExperienceSection({ dict, forceCollapsed }: Props) {
                         onChange={f.onChange}
                         onBlur={f.onBlur}
                         name={f.name}
+                        dict={dict}
                       />
                     )}
                   />
@@ -147,6 +148,7 @@ export function ExperienceSection({ dict, forceCollapsed }: Props) {
                         onChange={f.onChange}
                         onBlur={f.onBlur}
                         name={f.name}
+                        dict={dict}
                       />
                     )}
                   />

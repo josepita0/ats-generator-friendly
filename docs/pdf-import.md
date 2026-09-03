@@ -8,30 +8,30 @@ Import your existing CV from a PDF file to automatically fill in the form.
 2. Select your existing CV PDF file
 3. The system will:
    - Extract text from your PDF using `pdfjs-dist`
-   - Send the text to OpenAI for parsing
+   - Send the text to Google Gemini for parsing
    - Automatically fill in the form with extracted data
 
 ## Requirements
 
 - A PDF file with readable text (not scanned images)
-- OpenAI API key configured in `.env.local`
+- Google Gemini API key configured in `.env.local`
 
 ## Configuration
 
-Add your OpenAI API key to `.env.local`:
+Add your Gemini API key to `.env.local`:
 
 ```bash
-OPENAI_API_KEY=sk-your-key-here
+GOOGLE_API_KEY=your-key-here
 ```
 
-Get your API key at: https://platform.openai.com/api-keys
+Get your API key at: https://aistudio.google.com/app/apikey
 
 ## Error States
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| "AI not configured" | No API key found | Add `OPENAI_API_KEY` to `.env.local` |
-| "Failed to parse PDF" | OpenAI couldn't extract data | Make sure PDF has selectable text |
+| "AI not configured" | No API key found | Add `GOOGLE_API_KEY` to `.env.local` |
+| "Failed to parse PDF" | Gemini couldn't extract data | Make sure PDF has selectable text |
 | "Error importing PDF" | PDF extraction failed | Ensure the file is a valid PDF |
 
 ## Supported Fields

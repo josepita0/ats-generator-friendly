@@ -36,7 +36,10 @@ export const es = {
     add: 'Agregar',
     remove: 'Eliminar',
     current: 'Actual',
+    month: 'Mes',
+    year: 'Año',
   },
+  months: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
   fields: {
     name: 'Nombre completo',
     email: 'Correo electrónico',
@@ -176,7 +179,10 @@ export const en = {
     add: 'Add',
     remove: 'Remove',
     current: 'Current',
+    month: 'Month',
+    year: 'Year',
   },
+  months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   fields: {
     name: 'Full name',
     email: 'Email',

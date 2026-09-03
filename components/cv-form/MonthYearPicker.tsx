@@ -1,20 +1,11 @@
 'use client';
 
 import { useMemo } from 'react';
+import { Dictionary } from '@/lib/i18n/dictionaries';
 
-const MONTHS = [
-  { value: '01', label: 'Ene' },
-  { value: '02', label: 'Feb' },
-  { value: '03', label: 'Mar' },
-  { value: '04', label: 'Abr' },
-  { value: '05', label: 'May' },
-  { value: '06', label: 'Jun' },
-  { value: '07', label: 'Jul' },
-  { value: '08', label: 'Ago' },
-  { value: '09', label: 'Sep' },
-  { value: '10', label: 'Oct' },
-  { value: '11', label: 'Nov' },
-  { value: '12', label: 'Dic' },
+const MONTH_VALUES = [
+  '01', '02', '03', '04', '05', '06',
+  '07', '08', '09', '10', '11', '12',
 ];
 
 interface MonthYearPickerProps {
@@ -22,9 +13,10 @@ interface MonthYearPickerProps {
   onChange?: (value: string) => void;
   onBlur?: () => void;
   name?: string;
+  dict: Dictionary;
 }
 
-export function MonthYearPicker({ value = '', onChange, onBlur }: MonthYearPickerProps) {
+export function MonthYearPicker({ value = '', onChange, onBlur, dict }: MonthYearPickerProps) {
   const currentYear = new Date().getFullYear();
   const years = useMemo(() => {
     const arr: number[] = [];
@@ -33,6 +25,13 @@ export function MonthYearPicker({ value = '', onChange, onBlur }: MonthYearPicke
     }
     return arr;
   }, [currentYear]);
+
+  const months = useMemo(() => {
+    return MONTH_VALUES.map((val, i) => ({
+      value: val,
+      label: dict.months[i],
+    }));
+  }, [dict.months]);
 
   const parts = value ? value.split(/[\/-]/) : [];
   let selectedMonth = '';
@@ -74,8 +73,8 @@ export function MonthYearPicker({ value = '', onChange, onBlur }: MonthYearPicke
         onBlur={onBlur}
         className="retro-input p-2 w-full text-sm"
       >
-        <option value="">Mes</option>
-        {MONTHS.map((m) => (
+        <option value="">{dict.form.month}</option>
+        {months.map((m) => (
           <option key={m.value} value={m.value}>{m.label}</option>
         ))}
       </select>
@@ -85,7 +84,7 @@ export function MonthYearPicker({ value = '', onChange, onBlur }: MonthYearPicke
         onBlur={onBlur}
         className="retro-input p-2 w-full text-sm"
       >
-        <option value="">Año</option>
+        <option value="">{dict.form.year}</option>
         {years.map((y) => (
           <option key={y} value={String(y)}>{y}</option>
         ))}

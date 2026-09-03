@@ -34,7 +34,7 @@ npm start
 
 ## Optional: Enable AI Features
 
-AI features (PDF import, writing improvement) require an OpenAI API key.
+AI features (PDF import, translation, chat) require a Google Gemini API key.
 
 1. Copy the example environment file:
 
@@ -42,13 +42,13 @@ AI features (PDF import, writing improvement) require an OpenAI API key.
 cp .env.local.example .env.local
 ```
 
-2. Add your OpenAI API key:
+2. Add your Gemini API key:
 
 ```bash
-OPENAI_API_KEY=sk-your-key-here
+GOOGLE_API_KEY=your-key-here
 ```
 
-Get your API key at: https://platform.openai.com/api-keys
+Get your API key at: https://aistudio.google.com/app/apikey
 
 Without an API key, all core features (manual entry, PDF generation, preview) work normally.
 
@@ -56,7 +56,7 @@ Without an API key, all core features (manual entry, PDF generation, preview) wo
 
 ```
 app/
-├── api/ai/           # OpenAI API routes
+├── api/ai/           # Gemini API routes
 ├── cv/page.tsx       # CV form page
 ├── page.tsx          # Landing page
 └── layout.tsx         # Root layout
@@ -68,7 +68,7 @@ components/
 └── chat/             # AI writing assistant UI
 
 lib/
-├── ai/               # OpenAI helpers
+├── ai/               # Gemini helpers
 ├── cv/               # Zod schemas, default values
 ├── i18n/             # ES/EN dictionaries
 └── storage.ts        # localStorage utilities
@@ -90,7 +90,7 @@ docs/
 | State | useState / useReducer + localStorage |
 | Validation | react-hook-form + Zod |
 | PDF | @react-pdf/renderer |
-| AI | OpenAI API (optional) |
+| AI | Google Gemini API (optional) |
 
 ## ATS Compliance
 

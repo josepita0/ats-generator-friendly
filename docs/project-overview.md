@@ -93,7 +93,7 @@ User clicks "Improve" → /api/ai/improve → suggestion → user approves → f
 - **No database**: All state lives in the browser
 - **No authentication**: Single-user personal tool
 - **No server-side persistence**: localStorage only
-- **No external services** (optional): OpenAI API key is user-provided
+- **No external services** (optional): Google Gemini API key is user-provided
 
 The resume data model (`CVData` in `types/cv.ts`) is the single source of truth used by:
 - Form components (input)
@@ -137,5 +137,5 @@ interface CVData {
 | Styling | Tailwind CSS 4 | Utility-first, consistent design |
 | Validation | react-hook-form + Zod | Declarative form + runtime validation |
 | PDF | @react-pdf/renderer | Client-side, no headless browser |
-| AI | OpenAI API (optional) | Structured outputs, gpt-4o-mini |
+| AI | Google Gemini API (optional) | Structured outputs, gemini-3.6-flash |
 | Persistence | localStorage | Simple, no dependency |

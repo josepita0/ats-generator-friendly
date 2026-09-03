@@ -26,6 +26,7 @@ import { AppHeader } from "@/components/cv-form/AppHeader";
 import { PreviewPanel, CVPreview } from "@/components/cv-preview";
 import { SidebarPanel } from "@/components/cv-preview/SidebarPanel";
 import { CVDocument } from "@/components/pdf";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const PdfImporter = dynamic(
   () =>
@@ -62,6 +63,14 @@ function normalizeDates(data: CVData): CVData {
 type MobileTab = "editor" | "generate";
 
 export default function CVPage() {
+  return (
+    <ErrorBoundary>
+      <CVPageInner />
+    </ErrorBoundary>
+  );
+}
+
+function CVPageInner() {
   const [mounted, setMounted] = useState(false);
   const [initialData, setInitialData] = useState<CVData>(() =>
     createEmptyCVData(),
