@@ -3,6 +3,7 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import type { PersonalInfo } from '@/types/cv';
 import type { Dictionary } from '@/lib/i18n/dictionaries';
+import { formatCoverLetterDate } from '@/lib/i18n/dates';
 
 const styles = StyleSheet.create({
   page: {
@@ -49,9 +50,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const MONTHS_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
 interface Props {
   personalInfo: PersonalInfo;
   body: string;
@@ -60,14 +58,7 @@ interface Props {
 }
 
 export function CoverLetterDocument({ personalInfo, body, language }: Props) {
-  const now = new Date();
-  const day = now.getDate();
-  const year = now.getFullYear();
-
-  const dateFormatted =
-    language === 'es'
-      ? `${day} de ${MONTHS_ES[now.getMonth()]} de ${year}`
-      : `${MONTHS_EN[now.getMonth()]} ${day}, ${year}`;
+  const dateFormatted = formatCoverLetterDate(language);
 
   return (
     <Document>

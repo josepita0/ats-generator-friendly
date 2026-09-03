@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
+import { z } from 'zod';
 import { cvDataSchema } from '@/lib/cv/schemas';
+
+const parsePdfRequestSchema = z.object({
+  text: z.string().min(1, 'CV text is required'),
+});
 
 const jsonResponseSchema = {
   type: 'object',
@@ -101,7 +106,17 @@ const jsonResponseSchema = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { text } = await request.json();
+    const body = await request.json();
+
+    const parsed = parsePdfRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid request', details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { text } = parsed.data;
 
     const client = new GoogleGenAI({});
 
@@ -144,8 +159,8 @@ ${text}`,
       return NextResponse.json({ error: 'No response from AI' }, { status: 500 });
     }
 
-    const parsed = JSON.parse(rawText);
-    const validated = cvDataSchema.parse(parsed);
+    const aiResult = JSON.parse(rawText);
+    const validated = cvDataSchema.parse(aiResult);
 
     return NextResponse.json(validated);
   } catch (error) {

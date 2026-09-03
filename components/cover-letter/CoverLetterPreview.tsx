@@ -1,9 +1,7 @@
 'use client';
 
 import type { PersonalInfo } from '@/types/cv';
-
-const MONTHS_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+import { formatCoverLetterDate } from '@/lib/i18n/dates';
 
 interface Props {
   personalInfo: PersonalInfo;
@@ -12,14 +10,7 @@ interface Props {
 }
 
 export function CoverLetterPreview({ personalInfo, body, language }: Props) {
-  const now = new Date();
-  const day = now.getDate();
-  const year = now.getFullYear();
-
-  const dateFormatted =
-    language === 'es'
-      ? `${day} de ${MONTHS_ES[now.getMonth()]} de ${year}`
-      : `${MONTHS_EN[now.getMonth()]} ${day}, ${year}`;
+  const dateFormatted = formatCoverLetterDate(language);
 
   return (
     <div className="bg-white text-gray-900 p-8 font-sans text-sm shadow-md border border-gray-200 rounded-sm h-full overflow-y-auto">

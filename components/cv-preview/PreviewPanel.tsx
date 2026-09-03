@@ -6,6 +6,7 @@ import { CVData } from '@/types/cv';
 import { Dictionary } from '@/lib/i18n/dictionaries';
 import { CVPreview } from '@/components/cv-preview';
 import { CVDocument } from '@/components/pdf';
+import { downloadPdf } from '@/lib/pdf';
 
 interface Props {
   isOpen: boolean;
@@ -18,14 +19,7 @@ export function PreviewPanel({ isOpen, onClose, data, dict }: Props) {
   const handleDownloadPDF = useCallback(async () => {
     if (!data) return;
     const blob = await pdf(<CVDocument data={data} dict={dict} />).toBlob();
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${data.personalInfo.name.replace(/\s+/g, '_')}_CV.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadPdf(blob, `${data.personalInfo.name.replace(/\s+/g, '_')}_CV.pdf`);
   }, [data, dict]);
 
   return (

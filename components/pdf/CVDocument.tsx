@@ -4,6 +4,7 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVData } from '@/types/cv';
 import { Dictionary } from '@/lib/i18n/dictionaries';
 import { parseBullets } from '@/lib/cv/descriptions';
+import { formatDate } from '@/lib/i18n/dates';
 
 const styles = StyleSheet.create({
   page: {
@@ -134,9 +135,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const MONTHS_ES = ['', 'Ene.', 'Feb.', 'Mar.', 'Abr.', 'May.', 'Jun.', 'Jul.', 'Ago.', 'Sep.', 'Oct.', 'Nov.', 'Dic.'];
-const MONTHS_EN = ['', 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
-
 interface Props {
   data: CVData;
   dict: Dictionary;
@@ -144,21 +142,6 @@ interface Props {
 
 export function CVDocument({ data, dict }: Props) {
   const { personalInfo, summary, experience, education, skills, languages, language } = data;
-
-  const formatDate = (date: string | undefined, lang: 'es' | 'en') => {
-    if (!date) return '';
-    const parts = date.split(/[\/-]/);
-    if (parts.length !== 2) return date;
-    let month = parts[0];
-    let year = parts[1];
-    if (parts[0].length === 4) {
-      year = parts[0];
-      month = parts[1];
-    }
-    const months = lang === 'en' ? MONTHS_EN : MONTHS_ES;
-    const monthName = months[parseInt(month, 10)] || month;
-    return `${monthName} ${year}`;
-  };
 
   const summaryContent = language === 'es' ? summary.es : summary.en;
   const expPosition = (exp: CVData['experience'][0]) =>

@@ -6,6 +6,7 @@ import type { CVData } from '@/types/cv';
 import type { Dictionary } from '@/lib/i18n/dictionaries';
 import { saveCoverLetter, loadCoverLetter } from '@/lib/storage';
 import { CoverLetterDocument } from '@/components/pdf/CoverLetterDocument';
+import { downloadPdf } from '@/lib/pdf';
 
 interface Props {
   dict: Dictionary;
@@ -88,14 +89,7 @@ export function CoverLetterSection({ dict, getCvData, jobDescription, language, 
         dict={dict}
       />
     ).toBlob();
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${currentCv.personalInfo.name.replace(/\s+/g, '_')}_Cover_Letter.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadPdf(blob, `${currentCv.personalInfo.name.replace(/\s+/g, '_')}_Cover_Letter.pdf`);
   }, [getCvData, currentBody, language, dict]);
 
   const handleCopy = useCallback(async () => {
