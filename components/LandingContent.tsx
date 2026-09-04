@@ -241,7 +241,7 @@ export function LandingContent() {
             <span className="material-symbols-outlined text-primary text-[1.25rem]">
               info
             </span>
-            <p className="font-body-sm text-sm text-on-surface-variant max-w-md">
+            <p className="font-body-sm text-sm text-on-surface-variant">
               {lang === "es"
                 ? "Formato single-column, texto seleccionable, sin tablas ni gráficos — ideal para sistemas ATS."
                 : "Single-column format, selectable text, no tables or charts — ideal for ATS systems."}
