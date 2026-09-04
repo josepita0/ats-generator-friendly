@@ -14,6 +14,7 @@ import { EditorSidebar } from "@/components/editor/EditorSidebar";
 import { EditorWorkspace } from "@/components/editor/EditorWorkspace";
 import { EditorPreviewPanel } from "@/components/editor/EditorPreviewPanel";
 import { EditorFooter } from "@/components/editor/EditorFooter";
+import { LanguageSelector } from "@/components/ui";
 
 const PdfImporter = dynamic(
   () =>
@@ -54,6 +55,13 @@ function EditorPageInner() {
     [form],
   );
 
+  const handleImport = useCallback(
+    (data: CVData) => {
+      form.handleApplyCvData(data);
+    },
+    [form],
+  );
+
   const sync = useBilingualSync({
     cvData: form.formData,
     currentLang: form.lang,
@@ -79,6 +87,8 @@ function EditorPageInner() {
         atsScore={atsScore}
         showPreview={form.showPreview}
         onTogglePreview={() => form.setShowPreview(!form.showPreview)}
+        onImport={handleImport}
+        dict={form.dict}
       />
 
       {/* Main layout: Sidebar + Workspace + Preview Panel */}
@@ -92,14 +102,25 @@ function EditorPageInner() {
         />
 
         {/* Workspace de edición */}
-        <EditorWorkspace
-          activeSection={editorState.activeSection}
-          onSectionChange={editorState.setActiveSection}
-          methods={form.methods}
-          dict={form.dict}
-          lang={form.lang}
-          cvData={form.formData}
-        />
+
+        <div className="w-full ">
+          {/* Language Selector */}
+          <LanguageSelector
+            lang={form.lang}
+            onChange={form.handleLangChange}
+            onTranslate={handleTranslationSuccess}
+            getCvData={() => form.methods.getValues()}
+            dict={form.dict}
+          />
+          <EditorWorkspace
+            activeSection={editorState.activeSection}
+            onSectionChange={editorState.setActiveSection}
+            methods={form.methods}
+            dict={form.dict}
+            lang={form.lang}
+            cvData={form.formData}
+          />
+        </div>
 
         {/* Desktop: Split-view preview panel */}
         <EditorPreviewPanel
