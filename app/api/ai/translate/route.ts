@@ -8,10 +8,17 @@ const translateRequestSchema = z.object({
   cvData: z.unknown(),
   sourceLang: z.enum(['es', 'en']),
   targetLang: z.enum(['es', 'en']),
+  apiKey: z.string().min(1, 'API key is required'),
+  model: z.enum(['flash', 'pro']),
 }).refine(
   (data) => data.sourceLang !== data.targetLang,
   { message: 'sourceLang and targetLang must be different' }
 );
+
+/** Map client model shorthand to Gemini model ID */
+function resolveModelName(model: 'flash' | 'pro'): string {
+  return model === 'pro' ? 'gemini-2.5-pro' : 'gemini-3.6-flash';
+}
 
 const translateResponseSchema = z.object({
   summary: z.string(),
@@ -39,7 +46,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { cvData: rawCv, sourceLang, targetLang } = parsed.data;
+    const { cvData: rawCv, sourceLang, targetLang, apiKey, model } = parsed.data;
 
     const cvResult = cvDataSchema.safeParse(rawCv);
     if (!cvResult.success) {
@@ -89,10 +96,10 @@ ${experienceItems.map((e) => `ID: ${e.id}\nPosition: ${e.position || '(no conten
 EDUCATION:
 ${educationItems.map((e) => `ID: ${e.id}\nDegree: ${e.degree || '(no content)'}\nField: ${e.field || '(no content)'}`).join('\n---\n')}`;
 
-    const client = new GoogleGenAI({});
+    const client = new GoogleGenAI({ apiKey });
 
     const interaction = await client.interactions.create({
-      model: 'gemini-3.6-flash',
+      model: resolveModelName(model),
       input: prompt,
       response_format: {
         type: 'object',

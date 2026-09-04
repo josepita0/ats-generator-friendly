@@ -5,7 +5,14 @@ import { cvDataSchema } from '@/lib/cv/schemas';
 
 const parsePdfRequestSchema = z.object({
   text: z.string().min(1, 'CV text is required'),
+  apiKey: z.string().min(1, 'API key is required'),
+  model: z.enum(['flash', 'pro']),
 });
+
+/** Map client model shorthand to Gemini model ID */
+function resolveModelName(model: 'flash' | 'pro'): string {
+  return model === 'pro' ? 'gemini-2.5-pro' : 'gemini-3.6-flash';
+}
 
 const jsonResponseSchema = {
   type: 'object',
@@ -116,12 +123,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { text } = parsed.data;
+    const { text, apiKey, model } = parsed.data;
 
-    const client = new GoogleGenAI({});
+    const client = new GoogleGenAI({ apiKey });
 
     const interaction = await client.interactions.create({
-      model: 'gemini-3.6-flash',
+      model: resolveModelName(model),
       input: `You are a CV text parser. Your task is to EXTRACT information only — do NOT translate.
 
 DETECT LANGUAGE FIRST:

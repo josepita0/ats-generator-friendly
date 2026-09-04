@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Dictionary } from '@/lib/i18n/dictionaries';
 import type { CVData } from '@/types/cv';
+import { useCVStore } from '@/stores/cvStore';
 
 interface Props {
   onTranslate: (data: CVData) => void;
@@ -20,7 +21,16 @@ export function TranslateButton({ onTranslate, dict, getCvData, compact = false,
   const [direction, setDirection] = useState<'es-to-en' | 'en-to-es'>('es-to-en');
   const [showDirectionPicker, setShowDirectionPicker] = useState(false);
 
+  const apiKey = useCVStore((s) => s.apiKey);
+  const selectedModel = useCVStore((s) => s.selectedModel);
+
   const handleTranslate = async () => {
+    if (!apiKey) {
+      setState('error');
+      setError('Por favor configurá tu API key en Ajustes');
+      return;
+    }
+
     setState('translating');
     setError('');
 
@@ -32,7 +42,7 @@ export function TranslateButton({ onTranslate, dict, getCvData, compact = false,
       const response = await fetch('/api/ai/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cvData: currentData, sourceLang, targetLang }),
+        body: JSON.stringify({ cvData: currentData, sourceLang, targetLang, apiKey, model: selectedModel }),
       });
 
       if (!response.ok) {

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { extractTextFromPDF } from '@/lib/pdf';
 import { CVData } from '@/types/cv';
 import { Dictionary } from '@/lib/i18n/dictionaries';
+import { useCVStore } from '@/stores/cvStore';
 
 interface Props {
   onImport: (data: CVData) => void;
@@ -19,9 +20,18 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const apiKey = useCVStore((s) => s.apiKey);
+  const selectedModel = useCVStore((s) => s.selectedModel);
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!apiKey) {
+      setState('error');
+      setError(dict.pdfImporter.notConfigured);
+      return;
+    }
 
     setState('extracting');
     setError('');
@@ -33,7 +43,7 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
       const response = await fetch('/api/ai/parse-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, apiKey, model: selectedModel }),
       });
 
       if (!response.ok) {

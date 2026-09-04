@@ -4,7 +4,6 @@ import { useSettings } from "@/hooks/useSettings";
 import { PrivacyGuaranteeCard } from "@/components/settings/PrivacyGuaranteeCard";
 import { GeminiApiConfig } from "@/components/settings/GeminiApiConfig";
 import { BackupCard } from "@/components/settings/BackupCard";
-import { StorageQuotaCard } from "@/components/settings/StorageQuotaCard";
 import { PrivacyFooterBadge } from "@/components/settings/PrivacyFooterBadge";
 
 export default function SettingsPage() {
@@ -20,7 +19,7 @@ export default function SettingsPage() {
               <h1 className="font-headline-xl text-[2rem] lg:text-[2.5rem] font-medium text-primary mb-2">
                 Ajustes y Privacidad
               </h1>
-              <p className="font-body-lg text-on-surface-variant max-w-2xl">
+              <p className="font-body-lg text-on-surface-variant">
                 Control soberano de tus credenciales, modelos y datos. Todo
                 ocurre en tu navegador.
               </p>
@@ -43,14 +42,6 @@ export default function SettingsPage() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <div className="flex items-center gap-2 bg-surface-container-low/70 rounded-full px-4 py-2">
-              <span className="material-symbols-outlined text-[1rem] text-primary">
-                translate
-              </span>
-              <span className="font-label-sm text-on-surface">
-                2 Versiones Activas
-              </span>
-            </div>
             <div className="flex items-center gap-2 bg-surface-container-low/70 rounded-full px-4 py-2">
               <span className="material-symbols-outlined text-[1rem] text-primary">
                 database
@@ -80,15 +71,11 @@ export default function SettingsPage() {
             />
           </div>
 
-          {/* Right column - Backup + Storage (5 cols on lg) */}
+          {/* Right column - Backup (5 cols on lg) */}
           <div className="lg:col-span-5 space-y-6">
             <BackupCard
               onExport={settings.handleExport}
               onImport={settings.handleImport}
-            />
-            <StorageQuotaCard
-              storageUsage={settings.storageUsage}
-              onClearStorage={settings.handleClearStorage}
             />
             <PrivacyFooterBadge />
           </div>

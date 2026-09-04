@@ -25,18 +25,18 @@ const MODEL_OPTIONS: Array<{
   {
     id: 'flash',
     icon: 'bolt',
-    name: 'Gemini 1.5 Flash',
+    name: 'Gemini 3.6 Flash',
     badge: 'Recomendado • Rápido y eficiente',
     description:
-      'Ideal para borradores rápidos y ediciones frecuentes. Respuesta ágil.',
+      'Ideal para la mayoría de tareas. Respuestas rápidas con buena calidad. Perfecto para ediciones frecuentes y borradores iterativos.',
   },
   {
     id: 'pro',
     icon: 'auto_awesome',
-    name: 'Gemini 1.5 Pro',
-    badge: 'Máximo detalle • Redacción avanzada',
+    name: 'Gemini 2.5 Pro',
+    badge: 'Máxima calidad • Análisis profundo',
     description:
-      'Para resultados de alta calidad con razonamiento profundo y precisión.',
+      'Para tareas complejas que requieren razonamiento avanzado. Mejor para análisis detallado de job descriptions y optimización estratégica.',
   },
 ];
 

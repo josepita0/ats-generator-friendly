@@ -9,7 +9,15 @@ const improveRequestSchema = z.object({
   content: z.string().min(1, 'Content is required'),
   lang: z.enum(['es', 'en']),
   context: z.string().optional(),
+  apiKey: z.string().min(1, 'API key is required'),
+  model: z.enum(['flash', 'pro']),
+  tone: z.enum(['quantitative', 'concise', 'executive']),
 });
+
+/** Map client model shorthand to Gemini model ID */
+function resolveModelName(model: 'flash' | 'pro'): string {
+  return model === 'pro' ? 'gemini-2.5-pro' : 'gemini-3.6-flash';
+}
 
 const suggestionSchema = z.object({
   original: z.string(),
@@ -50,9 +58,30 @@ function buildImprovementPrompt(
   section: string,
   content: string,
   lang: 'es' | 'en',
+  tone: 'quantitative' | 'concise' | 'executive',
   context?: string,
 ): string {
   const langLabel = lang === 'es' ? 'Spanish' : 'English';
+
+  const toneGuidance: Record<string, string> = {
+    quantitative: `TONE: QUANTITATIVE ATS
+- Prioritize metrics, percentages, dollar amounts, team sizes, and measurable outcomes
+- Transform vague statements into data-driven achievements
+- Use specific numbers wherever possible (e.g., "increased sales by 35%" not "improved sales")
+- Focus on ROI, efficiency gains, and quantifiable impact`,
+    concise: `TONE: CONCISE DIRECT
+- Maximum brevity with direct impact
+- Eliminate filler words and unnecessary qualifiers
+- Each bullet should be punchy and action-oriented (10-20 words ideal)
+- Get straight to the point — no fluff, no padding
+- Use strong, single-word action verbs at the start`,
+    executive: `TONE: EXECUTIVE C-LEVEL
+- Strategic leadership language and executive positioning
+- Emphasize vision, transformation, and organizational impact
+- Use C-suite terminology: "spearheaded", "orchestrated", "drove strategic initiative"
+- Focus on business outcomes, stakeholder management, and board-level results
+- Position the candidate as a decision-maker and thought leader`,
+  };
 
   const sectionGuidance: Record<string, string> = {
     summary: `Focus on:
@@ -86,6 +115,8 @@ function buildImprovementPrompt(
 Analyze the following "${section}" section content in ${langLabel} and suggest concrete improvements.
 
 ${context ? `Additional context: ${context}` : ''}
+
+${toneGuidance[tone]}
 
 SECTION-SPECIFIC GUIDANCE:
 ${sectionGuidance[section] || ''}
@@ -127,14 +158,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { section, content, lang, context } = parsed.data;
+    const { section, content, lang, context, apiKey, model, tone } = parsed.data;
 
-    const prompt = buildImprovementPrompt(section, content, lang, context);
+    const prompt = buildImprovementPrompt(section, content, lang, tone, context);
 
-    const client = new GoogleGenAI({});
+    const client = new GoogleGenAI({ apiKey });
 
     const interaction = await client.interactions.create({
-      model: 'gemini-3.6-flash',
+      model: resolveModelName(model),
       input: prompt,
       response_format: geminiResponseFormat as any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Gemini SDK expects raw JSON schema type incompatible with TS
     });

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCVStore } from "@/stores/cvStore";
 
 const NAV_ITEMS = [
   { href: "/editor", label: "Editor de CV", icon: "edit_note" },
@@ -17,6 +18,7 @@ function isActive(pathname: string, href: string) {
 
 export function AppNavigation() {
   const pathname = usePathname();
+  const hasApiKey = !!useCVStore((s) => s.apiKey);
 
   return (
     <>
@@ -26,11 +28,13 @@ export function AppNavigation() {
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
             <Image src="/logo.png" alt="Avora" width={32} height={32} />
-            <span className="font-title-md text-[1.125rem] font-semibold text-on-surface tracking-tight">
-              Avora
-            </span>
+            <div className="flex flex-col items-center gap-1">
+              <span className="font-title-md text-[1.125rem] font-semibold text-on-surface tracking-tight">
+                Avora
+              </span>
+              <span className="badge badge-success">100% Local</span>
+            </div>
           </Link>
-          <span className="badge badge-success">100% Local</span>
         </div>
 
         {/* Center: Nav tabs */}
@@ -61,18 +65,21 @@ export function AppNavigation() {
 
         {/* Right: Status badges */}
         <div className="flex items-center gap-1.5">
-          <span className="badge badge-success">
-            <span className="material-symbols-outlined text-[0.625rem]">
-              check_circle
+          {hasApiKey ? (
+            <span className="badge badge-success">
+              <span className="material-symbols-outlined text-[0.625rem]">
+                check_circle
+              </span>
+              IA Configurada
             </span>
-            Conectado a Gemini
-          </span>
-          <span className="badge badge-success">
-            <span className="material-symbols-outlined text-[0.625rem]">
-              save
-            </span>
-            Guardado local
-          </span>
+          ) : (
+            <Link href="/settings" className="badge badge-warning">
+              <span className="material-symbols-outlined text-[0.625rem]">
+                warning
+              </span>
+              Configurar API Key
+            </Link>
+          )}
         </div>
       </header>
 

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import type { CVData, Language } from "@/types/cv";
+import { useCVStore } from "@/stores/cvStore";
 
 interface UseBilingualSyncOptions {
   cvData: CVData | undefined | null;
@@ -18,10 +19,18 @@ export function useBilingualSync({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  const apiKey = useCVStore((s) => s.apiKey);
+  const selectedModel = useCVStore((s) => s.selectedModel);
+
   const targetLang: Language = currentLang === "es" ? "en" : "es";
 
   const translate = useCallback(async () => {
     if (!cvData || isTranslating) return;
+
+    if (!apiKey) {
+      setError("Por favor configurá tu API key en Ajustes");
+      return;
+    }
 
     setIsTranslating(true);
     setError(null);
@@ -35,6 +44,8 @@ export function useBilingualSync({
           cvData,
           sourceLang: currentLang,
           targetLang,
+          apiKey,
+          model: selectedModel,
         }),
       });
 
@@ -54,7 +65,7 @@ export function useBilingualSync({
     } finally {
       setIsTranslating(false);
     }
-  }, [cvData, currentLang, targetLang, isTranslating, onSuccess]);
+  }, [cvData, currentLang, targetLang, isTranslating, onSuccess, apiKey, selectedModel]);
 
   return {
     isTranslating,

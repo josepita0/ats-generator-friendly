@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useCVStore } from '@/stores/cvStore';
 
 /* ── Types ───────────────────────────────────── */
 
@@ -25,7 +26,16 @@ export function useSectionImprovement() {
   const [suggestions, setSuggestions] = useState<ImprovementSuggestion[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const apiKey = useCVStore((s) => s.apiKey);
+  const selectedModel = useCVStore((s) => s.selectedModel);
+  const atsTone = useCVStore((s) => s.atsTone);
+
   const analyze = useCallback(async ({ section, content, lang, context }: AnalyzeOptions) => {
+    if (!apiKey) {
+      setError('Por favor configurá tu API key en Ajustes');
+      return;
+    }
+
     setIsAnalyzing(true);
     setError(null);
     setSuggestions([]);
@@ -34,7 +44,7 @@ export function useSectionImprovement() {
       const response = await fetch('/api/ai/improve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ section, content, lang, context }),
+        body: JSON.stringify({ section, content, lang, context, apiKey, model: selectedModel, tone: atsTone }),
       });
 
       const result = await response.json();
@@ -51,7 +61,7 @@ export function useSectionImprovement() {
     } finally {
       setIsAnalyzing(false);
     }
-  }, []);
+  }, [apiKey, selectedModel, atsTone]);
 
   const clearSuggestions = useCallback(() => {
     setSuggestions([]);
