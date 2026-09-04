@@ -1,0 +1,21 @@
+{
+  "name": "Avora — CV Bilingüe Optimizado para ATS",
+  "short_name": "Avora",
+  "description": "Construí tu CV bilingüe optimizado para sistemas ATS. Asistente de IA, exportación PDF del lado del cliente.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071539",
+  "theme_color": "#f86b2a",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

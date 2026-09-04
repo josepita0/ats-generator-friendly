@@ -1,4 +1,4 @@
-# Changelog — RetroResume
+# Changelog — Avora
 
 ## [Unreleased]
 
