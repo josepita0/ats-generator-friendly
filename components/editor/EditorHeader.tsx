@@ -1,6 +1,14 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { CVData } from "@/types/cv";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
+
+const PdfImporter = dynamic(
+  () =>
+    import("@/components/cv-form/PdfImporter").then((mod) => mod.PdfImporter),
+  { ssr: false },
+);
 
 interface EditorHeaderProps {
   cvData: CVData | null;
@@ -8,6 +16,8 @@ interface EditorHeaderProps {
   atsScore: number;
   showPreview: boolean;
   onTogglePreview: () => void;
+  onImport: (data: CVData) => void;
+  dict: Dictionary;
 }
 
 export function EditorHeader({
@@ -16,6 +26,8 @@ export function EditorHeader({
   atsScore,
   showPreview,
   onTogglePreview,
+  onImport,
+  dict,
 }: EditorHeaderProps) {
   return (
     <div className=" border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-sm">
@@ -32,6 +44,9 @@ export function EditorHeader({
           </div>
 
           <div className="flex items-center gap-3 bg-on-primary py-2.5 rounded-full px-4">
+            {/* PDF Importer */}
+            <PdfImporter onImport={onImport} dict={dict} compact />
+
             {/* ATS Score Badge */}
             <div className="flex items-center gap-1.5 px-2.5 py-1  rounded-full">
               <span className="material-symbols-outlined text-primary text-[16px]">
@@ -64,16 +79,6 @@ export function EditorHeader({
                 {showPreview ? "Ocultar Preview" : "Mostrar Preview"}
               </span>
             </button>
-
-            {/* Language Indicator */}
-            {/* <div className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-container rounded-full">
-              <span className="material-symbols-outlined text-on-surface-variant text-[16px]">
-                language
-              </span>
-              <span className="font-label-xs text-label-xs text-on-surface font-medium">
-                {lang === "es" ? "Español" : "English"}
-              </span>
-            </div> */}
           </div>
         </div>
       </div>

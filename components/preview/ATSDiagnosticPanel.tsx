@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { ATSHealthMetrics } from '@/components/preview/ATSHealthMetrics';
+import { ATSHealthMetrics } from "@/components/preview/ATSHealthMetrics";
 import {
   IndexabilityRules,
   type IndexabilityRule,
-} from '@/components/preview/IndexabilityRules';
+} from "@/components/preview/IndexabilityRules";
 import {
   LayoutParameters,
   type PaperSize,
   type MarginPreset,
   type FontScale,
-} from '@/components/preview/LayoutParameters';
+} from "@/components/preview/LayoutParameters";
 
 interface ProgressMetric {
   label: string;
@@ -36,10 +36,10 @@ interface Props {
 function ProgressBar({ label, percentage }: ProgressMetric) {
   const barColor =
     percentage >= 90
-      ? 'bg-primary-container'
+      ? "bg-primary-container"
       : percentage >= 70
-        ? 'bg-[#8a6d00]'
-        : 'bg-error';
+        ? "bg-[#8a6d00]"
+        : "bg-error";
 
   return (
     <div>
@@ -142,16 +142,6 @@ export function ATSDiagnosticPanel({
 
       {/* Action buttons */}
       <div className="space-y-2">
-        <button
-          type="button"
-          onClick={onOptimizeWithAI}
-          className="btn-secondary flex items-center gap-2 w-full justify-center"
-        >
-          <span className="material-symbols-outlined text-[16px]">
-            auto_awesome
-          </span>
-          Optimizar con Gemini
-        </button>
         <button
           type="button"
           onClick={onExportJSON}

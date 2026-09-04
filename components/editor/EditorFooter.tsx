@@ -31,7 +31,7 @@ export function EditorFooter({
     <div className="fixed bottom-20 left-6 right-6 z-30">
       <div className="max-w-[1400px] mx-auto bg-surface-container-lowest rounded-full shadow-card border border-outline-variant/30 px-6 py-3 flex items-center justify-between">
         {/* Save status */}
-        <div className="flex items-center gap-2 text-on-surface-variant min-w-0">
+        <div className="flex items-center gap-2 text-[0.75rem] text-primary font-semibold min-w-0">
           {isSaving ? (
             <>
               <span className="material-symbols-outlined text-[16px] animate-pulse shrink-0 text-primary">
@@ -67,9 +67,16 @@ export function EditorFooter({
           <span className="hidden sm:inline text-on-surface-variant/40 mx-2">
             •
           </span>
-          <span className="hidden sm:inline font-label-sm text-label-sm text-on-surface-variant/70 whitespace-nowrap">
-            Zero Server / Datos en tu equipo
-          </span>
+
+          <div className="hidden sm:flex items-center gap-1.5 text-primary  whitespace-nowrap">
+            <span className="material-symbols-outlined text-[0.75rem]">
+              cloud_off
+            </span>
+
+            <span className="hidden sm:inline font-label-sm text-[0.75rem] text-primary font-semibold whitespace-nowrap">
+              Zero Server / Datos en tu equipo
+            </span>
+          </div>
         </div>
 
         {/* Actions */}
@@ -80,13 +87,12 @@ export function EditorFooter({
             className="btn-primary flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-[16px]">
-              picture_as_pdf
+              download
             </span>
-            <span className="hidden sm:inline">Previsualizar PDF ATS</span>
+            <span className="hidden sm:inline text-[0.75rem]">
+              Descargar PDF
+            </span>
             <span className="sm:hidden">PDF</span>
-            <span className="material-symbols-outlined text-[14px]">
-              arrow_forward
-            </span>
           </button>
         </div>
       </div>

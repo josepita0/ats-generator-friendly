@@ -27,12 +27,17 @@ export function EditorSidebar({
 
   return (
     <aside className="hidden lg:block w-[400px] sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto custom-scroll shrink-0 ">
-      <div className="px-3 py-4">
+      <div className="px-3 py-4 pt-0">
         {/* Secciones del CV */}
         <div className="mb-6">
-          <h2 className="font-label-xs text-label-xs text-on-surface-variant  tracking-wider mb-3 px-3">
-            Secciones del CV
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="font-label-xs text-label-xs text-on-surface-variant  tracking-wider  px-3">
+              Secciones del CV
+            </h2>
+            <span className="bg-surface-container text-primary  rounded-full w-6 h-6 flex items-center justify-center text-[0.75rem] font-semibold">
+              6
+            </span>
+          </div>
 
           <nav className="space-y-2">
             {sectionStatuses.map((section) => {

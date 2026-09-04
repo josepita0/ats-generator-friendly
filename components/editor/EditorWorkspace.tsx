@@ -283,9 +283,9 @@ export function EditorWorkspace({
             type="button"
             onClick={handleAnalyze}
             disabled={isAnalyzing}
-            className="btn-secondary flex items-center gap-1.5 mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`btn-secondary flex items-center gap-1.5 mb-6 disabled:cursor-not-allowed ${isAnalyzing ? 'ring-2 ring-primary/30' : ''}`}
           >
-            <span className="material-symbols-outlined text-[16px]">
+            <span className={`material-symbols-outlined text-[16px] ${isAnalyzing ? 'animate-pulse text-primary' : ''}`}>
               {isAnalyzing ? "hourglass_empty" : "auto_awesome"}
             </span>
             {isAnalyzing ? "Analizando…" : "Analizar con IA"}
@@ -294,9 +294,9 @@ export function EditorWorkspace({
 
         {/* Section Content */}
         {activeSection === "personal-info" && <PersonalInfoSectionNew />}
-        {activeSection === "summary" && <SummarySectionNew />}
-        {activeSection === "experience" && <ExperienceSectionNew />}
-        {activeSection === "education" && <EducationSectionNew />}
+        {activeSection === "summary" && <SummarySectionNew lang={lang} />}
+        {activeSection === "experience" && <ExperienceSectionNew lang={lang} />}
+        {activeSection === "education" && <EducationSectionNew lang={lang} />}
         {activeSection === "skills" && <SkillsSectionNew />}
         {activeSection === "languages" && <LanguagesSectionNew />}
 

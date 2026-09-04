@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import type { PaperSize } from '@/components/preview/LayoutParameters';
+import { useCallback } from "react";
+import type { PaperSize } from "@/components/preview/LayoutParameters";
 
 interface Props {
   onCopyText: () => void;
@@ -39,21 +39,11 @@ export function PreviewControls({
         className="btn-ghost flex items-center gap-1.5 text-[0.8125rem]"
       >
         <span className="material-symbols-outlined text-[16px]">
-          {textCopied ? 'check' : 'content_copy'}
+          {textCopied ? "check" : "content_copy"}
         </span>
         <span className="hidden sm:inline">
-          {textCopied ? 'Copiado' : 'Copiar Texto'}
+          {textCopied ? "Copiado" : "Copiar Texto"}
         </span>
-      </button>
-
-      {/* Print */}
-      <button
-        type="button"
-        onClick={onPrint}
-        className="btn-ghost flex items-center gap-1.5 text-[0.8125rem]"
-      >
-        <span className="material-symbols-outlined text-[16px]">print</span>
-        <span className="hidden sm:inline">Imprimir</span>
       </button>
 
       {/* Download PDF */}
@@ -98,7 +88,7 @@ export function PreviewControls({
 
       {/* Badges */}
       <span className="badge badge-success">
-        {paperSize === 'A4' ? 'A4 (210 × 297 mm)' : 'Letter (8.5 × 11")'}
+        {paperSize === "A4" ? "A4 (210 × 297 mm)" : 'Letter (8.5 × 11")'}
       </span>
       <span className="badge badge-success">
         <span className="material-symbols-outlined text-[0.5rem]">check</span>
