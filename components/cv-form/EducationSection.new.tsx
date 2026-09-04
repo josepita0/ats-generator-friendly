@@ -5,7 +5,11 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import type { CVData } from '@/types/cv';
 import { InputCard, ExpandableCard } from '@/components/ui';
 
-export function EducationSectionNew() {
+interface Props {
+  lang: 'es' | 'en';
+}
+
+export function EducationSectionNew({ lang }: Props) {
   const {
     register,
     watch,
@@ -42,8 +46,8 @@ export function EducationSectionNew() {
         return (
           <ExpandableCard
             key={field.id}
-            title={educationValues[index]?.institution || `Educación ${index + 1}`}
-            subtitle={educationValues[index]?.degree?.es || 'Sin título definido'}
+            title={educationValues[index]?.institution || (lang === 'es' ? `Educación ${index + 1}` : `Education ${index + 1}`)}
+            subtitle={educationValues[index]?.degree?.[lang] || (lang === 'es' ? 'Sin título definido' : 'No degree defined')}
             icon="school"
             isExpanded={isExpanded}
             onToggle={() => toggleExpanded(index)}
@@ -52,56 +56,40 @@ export function EducationSectionNew() {
             <div className="space-y-6">
               {/* Institución */}
               <InputCard
-                label="Institución"
+                label={lang === 'es' ? 'Institución' : 'Institution'}
                 icon="account_balance"
-                placeholder="Ej: Universidad de Buenos Aires"
+                placeholder={lang === 'es' ? 'Ej: Universidad de Buenos Aires' : 'E.g.: Harvard University'}
                 {...register(`education.${index}.institution`)}
                 error={eduErrors?.institution?.message}
               />
 
-              {/* Título ES / EN */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputCard
-                  label="Título (ES)"
-                  placeholder="Ej: Licenciatura en Sistemas"
-                  {...register(`education.${index}.degree.es`)}
-                  error={eduErrors?.degree?.es?.message}
-                />
-                <InputCard
-                  label="Título (EN)"
-                  placeholder="E.g.: Bachelor of Computer Science"
-                  {...register(`education.${index}.degree.en`)}
-                  error={eduErrors?.degree?.en?.message}
-                />
-              </div>
+              {/* Título */}
+              <InputCard
+                label={lang === 'es' ? 'Título' : 'Degree'}
+                placeholder={lang === 'es' ? 'Ej: Licenciatura en Sistemas' : 'E.g.: Bachelor of Computer Science'}
+                {...register(`education.${index}.degree.${lang}`)}
+                error={eduErrors?.degree?.[lang]?.message}
+              />
 
-              {/* Campo ES / EN */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputCard
-                  label="Campo de estudio (ES)"
-                  placeholder="Ej: Ciencias de la Computación"
-                  {...register(`education.${index}.field.es`)}
-                  error={eduErrors?.field?.es?.message}
-                />
-                <InputCard
-                  label="Field of study (EN)"
-                  placeholder="E.g.: Computer Science"
-                  {...register(`education.${index}.field.en`)}
-                  error={eduErrors?.field?.en?.message}
-                />
-              </div>
+              {/* Campo de estudio */}
+              <InputCard
+                label={lang === 'es' ? 'Campo de estudio' : 'Field of Study'}
+                placeholder={lang === 'es' ? 'Ej: Ciencias de la Computación' : 'E.g.: Computer Science'}
+                {...register(`education.${index}.field.${lang}`)}
+                error={eduErrors?.field?.[lang]?.message}
+              />
 
               {/* Fechas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputCard
-                  label="Fecha de inicio"
+                  label={lang === 'es' ? 'Fecha de inicio' : 'Start Date'}
                   icon="calendar_today"
                   placeholder="MM/YYYY"
                   {...register(`education.${index}.startDate`)}
                   error={eduErrors?.startDate?.message}
                 />
                 <InputCard
-                  label="Fecha de fin"
+                  label={lang === 'es' ? 'Fecha de fin' : 'End Date'}
                   icon="calendar_today"
                   placeholder="MM/YYYY"
                   {...register(`education.${index}.endDate`)}
@@ -129,7 +117,7 @@ export function EducationSectionNew() {
         "
       >
         <span className="material-symbols-outlined text-[20px]">add</span>
-        Agregar educación
+        {lang === 'es' ? 'Agregar educación' : 'Add education'}
       </button>
     </div>
   );

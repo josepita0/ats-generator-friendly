@@ -5,7 +5,11 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import type { CVData } from '@/types/cv';
 import { InputCard, TextareaCard, ExpandableCard } from '@/components/ui';
 
-export function ExperienceSectionNew() {
+interface Props {
+  lang: 'es' | 'en';
+}
+
+export function ExperienceSectionNew({ lang }: Props) {
   const {
     register,
     watch,
@@ -46,8 +50,8 @@ export function ExperienceSectionNew() {
         return (
           <ExpandableCard
             key={field.id}
-            title={expData?.company || `Experiencia ${index + 1}`}
-            subtitle={expData?.position?.es || 'Sin puesto definido'}
+            title={expData?.company || (lang === 'es' ? `Experiencia ${index + 1}` : `Experience ${index + 1}`)}
+            subtitle={expData?.position?.[lang] || (lang === 'es' ? 'Sin puesto definido' : 'No position defined')}
             icon="work"
             isExpanded={isExpanded}
             onToggle={() => toggleExpanded(index)}
@@ -56,40 +60,32 @@ export function ExperienceSectionNew() {
             <div className="space-y-4">
               {/* Empresa */}
               <InputCard
-                label="Empresa"
+                label={lang === 'es' ? 'Empresa' : 'Company'}
                 icon="business"
-                placeholder="Ej: Google, Mercado Libre"
+                placeholder={lang === 'es' ? 'Ej: Google, Mercado Libre' : 'E.g.: Google, Microsoft'}
                 {...register(`experience.${index}.company`)}
                 error={expErrors?.company?.message}
               />
 
-              {/* Puesto ES / EN */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InputCard
-                  label="Puesto (ES)"
-                  placeholder="Ej: Senior Frontend Developer"
-                  {...register(`experience.${index}.position.es`)}
-                  error={expErrors?.position?.es?.message}
-                />
-                <InputCard
-                  label="Puesto (EN)"
-                  placeholder="Ej: Senior Frontend Developer"
-                  {...register(`experience.${index}.position.en`)}
-                  error={expErrors?.position?.en?.message}
-                />
-              </div>
+              {/* Puesto */}
+              <InputCard
+                label={lang === 'es' ? 'Puesto' : 'Position'}
+                placeholder={lang === 'es' ? 'Ej: Senior Frontend Developer' : 'E.g.: Senior Frontend Developer'}
+                {...register(`experience.${index}.position.${lang}`)}
+                error={expErrors?.position?.[lang]?.message}
+              />
 
               {/* Ubicación / Fechas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputCard
-                  label="Ubicación"
+                  label={lang === 'es' ? 'Ubicación' : 'Location'}
                   icon="location_on"
-                  placeholder="Ej: Buenos Aires, Argentina"
+                  placeholder={lang === 'es' ? 'Ej: Buenos Aires, Argentina' : 'E.g.: San Francisco, CA'}
                   {...register(`experience.${index}.location`)}
                   error={expErrors?.location?.message}
                 />
                 <InputCard
-                  label="Fecha de inicio"
+                  label={lang === 'es' ? 'Fecha de inicio' : 'Start Date'}
                   icon="calendar_today"
                   placeholder="MM/YYYY"
                   {...register(`experience.${index}.startDate`)}
@@ -99,7 +95,7 @@ export function ExperienceSectionNew() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InputCard
-                  label="Fecha de fin"
+                  label={lang === 'es' ? 'Fecha de fin' : 'End Date'}
                   icon="calendar_today"
                   placeholder="MM/YYYY"
                   disabled={false}
@@ -114,27 +110,22 @@ export function ExperienceSectionNew() {
                       className="w-5 h-5 rounded-lg border-outline-variant/60 text-primary focus:ring-primary accent-primary cursor-pointer"
                     />
                     <span className="font-body-md text-body-md text-on-surface">
-                      Trabajo aquí actualmente
+                      {lang === 'es' ? 'Trabajo aquí actualmente' : 'I currently work here'}
                     </span>
                   </label>
                 </div>
               </div>
 
-              {/* Descripción ES / EN */}
+              {/* Descripción */}
               <TextareaCard
-                label="Descripción (ES)"
-                placeholder="Describe tus responsabilidades y logros cuantificables..."
-                minHeight="100px"
-                {...register(`experience.${index}.descriptions.es`)}
-                error={expErrors?.descriptions?.es?.message}
-              />
-
-              <TextareaCard
-                label="Description (EN)"
-                placeholder="Describe your responsibilities and quantifiable achievements..."
-                minHeight="100px"
-                {...register(`experience.${index}.descriptions.en`)}
-                error={expErrors?.descriptions?.en?.message}
+                label={lang === 'es' ? 'Descripción' : 'Description'}
+                placeholder={lang === 'es'
+                  ? 'Describe tus responsabilidades y logros cuantificables...'
+                  : 'Describe your responsibilities and quantifiable achievements...'
+                }
+                minHeight="150px"
+                {...register(`experience.${index}.descriptions.${lang}`)}
+                error={expErrors?.descriptions?.[lang]?.message}
               />
             </div>
           </ExpandableCard>
@@ -157,7 +148,7 @@ export function ExperienceSectionNew() {
         "
       >
         <span className="material-symbols-outlined text-[18px]">add</span>
-        Agregar experiencia
+        {lang === 'es' ? 'Agregar experiencia' : 'Add experience'}
       </button>
     </div>
   );
