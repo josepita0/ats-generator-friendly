@@ -71,7 +71,7 @@ export function MonthYearPicker({ value = '', onChange, onBlur, dict }: MonthYea
         value={selectedMonth}
         onChange={(e) => handleMonthChange(e.target.value)}
         onBlur={onBlur}
-        className="retro-input p-2 w-full text-sm"
+        className="input-field w-full text-sm"
       >
         <option value="">{dict.form.month}</option>
         {months.map((m) => (
@@ -82,7 +82,7 @@ export function MonthYearPicker({ value = '', onChange, onBlur, dict }: MonthYea
         value={selectedYear}
         onChange={(e) => handleYearChange(e.target.value)}
         onBlur={onBlur}
-        className="retro-input p-2 w-full text-sm"
+        className="input-field w-full text-sm"
       >
         <option value="">{dict.form.year}</option>
         {years.map((y) => (

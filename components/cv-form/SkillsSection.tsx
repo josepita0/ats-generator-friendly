@@ -17,12 +17,12 @@ export function SkillsSection({ dict, forceCollapsed }: Props) {
   const effectiveCollapsed = forceCollapsed ?? collapsed;
 
   return (
-    <div className="section-card">
-      <div className="section-header rounded-t-lg">
-        <div className="section-header-title">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
-          </svg>
+    <div className="bg-surface-container-lowest rounded-3xl shadow-card">
+      <div className="flex items-center justify-between px-spacing-lg py-4 border-b border-outline-variant/30">
+        <div className="flex items-center gap-2 font-title-sm text-title-sm text-on-surface">
+          <span className="material-symbols-outlined text-[18px]">
+            code_blocks
+          </span>
           {dict.form.skills}
         </div>
         <div className="flex items-center gap-2">
@@ -35,69 +35,75 @@ export function SkillsSection({ dict, forceCollapsed }: Props) {
                 skills: [],
               })
             }
-            className="px-btn-add"
+            className="btn-secondary flex items-center gap-1.5 text-[0.8125rem]"
           >
-            + {dict.form.add}
+            <span className="material-symbols-outlined text-[16px]">add</span>
+            {dict.form.add}
           </button>
           <button
             type="button"
             onClick={() => setCollapsed(!effectiveCollapsed)}
-            className="text-[#FFF3D5] hover:brightness-110 cursor-pointer"
+            className="text-on-surface-variant hover:text-on-surface cursor-pointer transition-colors"
           >
-            <svg
-              className={`w-5 h-5 chevron-icon ${!effectiveCollapsed ? 'rotated' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <span
+              className={`material-symbols-outlined text-[20px] transition-transform ${
+                !effectiveCollapsed ? "" : "rotate-180"
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+              expand_more
+            </span>
           </button>
         </div>
       </div>
-      <div className={`section-collapse ${!effectiveCollapsed ? 'open' : ''}`}>
-        <div>
-          <div className="section-body space-y-4 rounded-b-lg">
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          !effectiveCollapsed ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="p-spacing-lg space-y-3">
           {fields.map((field, index) => (
             <div
               key={field.id}
-              className="bg-[#FFF3D5]/40 border-2 border-[#06132E] rounded-lg p-4 relative"
+              className="bg-surface-container-low rounded-2xl border border-outline-variant/30 p-4 relative"
             >
               <button
                 type="button"
                 onClick={() => remove(index)}
-                className="px-remove-btn"
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-on-error-container transition-colors cursor-pointer"
+                aria-label={dict.form.remove}
               >
-                ✕
+                <span className="material-symbols-outlined text-[14px]">
+                  close
+                </span>
               </button>
-              <div>
-                <label className="px-label">{dict.fields.category}</label>
-                <input
-                  {...register(`skills.${index}.category` as const, {
-                    required: dict.validation.required,
-                  })}
-                  className="px-input"
-                  placeholder="Programming Languages, Frameworks, Tools"
-                />
-              </div>
-              <div className="mt-3">
-                <label className="px-label">{dict.fields.skillList}</label>
-                <input
-                  {...register(`skills.${index}.skills` as const, {
-                    required: dict.validation.required,
-                  })}
-                  className="px-input"
-                  placeholder="React, TypeScript, Node.js"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                <div className="sm:col-span-5">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.category}
+                  </label>
+                  <input
+                    {...register(`skills.${index}.category` as const, {
+                      required: dict.validation.required,
+                    })}
+                    className="input-field"
+                    placeholder="Programming Languages, Frameworks, Tools"
+                  />
+                </div>
+                <div className="sm:col-span-7">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.skillList}
+                  </label>
+                  <input
+                    {...register(`skills.${index}.skills` as const, {
+                      required: dict.validation.required,
+                    })}
+                    className="input-field"
+                    placeholder="React, TypeScript, Node.js"
+                  />
+                </div>
               </div>
             </div>
           ))}
-        </div>
         </div>
       </div>
     </div>

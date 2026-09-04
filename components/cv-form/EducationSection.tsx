@@ -18,12 +18,12 @@ export function EducationSection({ dict, forceCollapsed }: Props) {
   const effectiveCollapsed = forceCollapsed ?? collapsed;
 
   return (
-    <div className="section-card">
-      <div className="section-header rounded-t-lg">
-        <div className="section-header-title">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
-          </svg>
+    <div className="bg-surface-container-lowest rounded-3xl shadow-card">
+      <div className="flex items-center justify-between px-spacing-lg py-4 border-b border-outline-variant/30">
+        <div className="flex items-center gap-2 font-title-sm text-title-sm text-on-surface">
+          <span className="material-symbols-outlined text-[18px]">
+            school
+          </span>
           {dict.form.education}
         </div>
         <div className="flex items-center gap-2">
@@ -39,94 +39,63 @@ export function EducationSection({ dict, forceCollapsed }: Props) {
                 endDate: "",
               })
             }
-            className="px-btn-add"
+            className="btn-secondary flex items-center gap-1.5 text-[0.8125rem]"
           >
-            + {dict.form.add}
+            <span className="material-symbols-outlined text-[16px]">add</span>
+            {dict.form.add}
           </button>
           <button
             type="button"
             onClick={() => setCollapsed(!effectiveCollapsed)}
-            className="text-[#FFF3D5] hover:brightness-110 cursor-pointer"
+            className="text-on-surface-variant hover:text-on-surface cursor-pointer transition-colors"
           >
-            <svg
-              className={`w-5 h-5 chevron-icon ${!effectiveCollapsed ? 'rotated' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <span
+              className={`material-symbols-outlined text-[20px] transition-transform ${
+                !effectiveCollapsed ? "" : "rotate-180"
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+              expand_more
+            </span>
           </button>
         </div>
       </div>
-      <div className={`section-collapse ${!effectiveCollapsed ? 'open' : ''}`}>
-        <div>
-          <div className="section-body space-y-4 rounded-b-lg">
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          !effectiveCollapsed ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="p-spacing-lg space-y-3">
           {fields.map((field, index) => (
             <div
               key={field.id}
-              className="bg-[#FFF3D5]/40 border-2 border-[#06132E] rounded-lg p-4 relative"
+              className="bg-surface-container-low rounded-2xl border border-outline-variant/30 p-4 relative"
             >
               <button
                 type="button"
                 onClick={() => remove(index)}
-                className="px-remove-btn"
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-on-error-container transition-colors cursor-pointer"
+                aria-label={dict.form.remove}
               >
-                ✕
+                <span className="material-symbols-outlined text-[14px]">
+                  close
+                </span>
               </button>
-              <div>
-                <label className="px-label">{dict.fields.institution}</label>
-                <input
-                  {...register(`education.${index}.institution` as const, {
-                    required: dict.validation.required,
-                  })}
-                  className="px-input"
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                <div>
-                  <label className="px-label">{dict.fields.degree} (ES)</label>
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                <div className="sm:col-span-6">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.institution}
+                  </label>
                   <input
-                    {...register(`education.${index}.degree.es` as const, {
+                    {...register(`education.${index}.institution` as const, {
                       required: dict.validation.required,
                     })}
-                    className="px-input"
+                    className="input-field"
                   />
                 </div>
-                <div>
-                  <label className="px-label">{dict.fields.degree} (EN)</label>
-                  <input
-                    {...register(`education.${index}.degree.en` as const)}
-                    className="px-input"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                <div>
-                  <label className="px-label">{dict.fields.field} (ES)</label>
-                  <input
-                    {...register(`education.${index}.field.es` as const, {
-                      required: dict.validation.required,
-                    })}
-                    className="px-input"
-                  />
-                </div>
-                <div>
-                  <label className="px-label">{dict.fields.field} (EN)</label>
-                  <input
-                    {...register(`education.${index}.field.en` as const)}
-                    className="px-input"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                <div>
-                  <label className="px-label">{dict.fields.startDate}</label>
+                <div className="sm:col-span-3">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.startDate}
+                  </label>
                   <Controller
                     control={control}
                     name={`education.${index}.startDate` as const}
@@ -142,8 +111,10 @@ export function EducationSection({ dict, forceCollapsed }: Props) {
                     )}
                   />
                 </div>
-                <div>
-                  <label className="px-label">{dict.fields.endDate}</label>
+                <div className="sm:col-span-3">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.endDate}
+                  </label>
                   <Controller
                     control={control}
                     name={`education.${index}.endDate` as const}
@@ -159,9 +130,52 @@ export function EducationSection({ dict, forceCollapsed }: Props) {
                   />
                 </div>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                <div>
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.degree} (ES)
+                  </label>
+                  <input
+                    {...register(`education.${index}.degree.es` as const, {
+                      required: dict.validation.required,
+                    })}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.degree} (EN)
+                  </label>
+                  <input
+                    {...register(`education.${index}.degree.en` as const)}
+                    className="input-field"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                <div>
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.field} (ES)
+                  </label>
+                  <input
+                    {...register(`education.${index}.field.es` as const, {
+                      required: dict.validation.required,
+                    })}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.field} (EN)
+                  </label>
+                  <input
+                    {...register(`education.${index}.field.en` as const)}
+                    className="input-field"
+                  />
+                </div>
+              </div>
             </div>
           ))}
-        </div>
         </div>
       </div>
     </div>

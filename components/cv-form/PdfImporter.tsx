@@ -69,7 +69,7 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
       case 'error':
         return dict.pdfImporter.tryAgain;
       default:
-        return 'IMPORT PDF';
+        return dict.pdfImporter.title;
     }
   };
 
@@ -89,11 +89,9 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isDisabled}
-          className="px-btn-orange w-10 h-10 flex items-center justify-center p-0"
+          className="btn-secondary w-10 h-10 flex items-center justify-center p-0 !rounded-full"
         >
-        <svg className="w-5 h-5 text-[#FFF3D5]" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.34v6h6.66V9h3.34z" />
-        </svg>
+          <span className="material-symbols-outlined text-[18px]">upload_file</span>
         </button>
       </div>
     );
@@ -113,15 +111,13 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isDisabled}
-          className="px-btn-orange flex items-center gap-1.5"
+          className="btn-secondary flex items-center gap-1.5 text-[0.8125rem]"
         >
-          <svg className="w-4 h-4 text-[#FFF3D5]" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.34v6h6.66V9h3.34z" />
-          </svg>
+          <span className="material-symbols-outlined text-[16px]">upload_file</span>
           {getButtonText()}
         </button>
         {state === 'error' && (
-          <p className="absolute top-full left-0 mt-1 text-[10px] text-red-400 font-label-md whitespace-nowrap">{error}</p>
+          <p className="absolute top-full left-0 mt-1 text-[10px] text-error font-label-xs whitespace-nowrap">{error}</p>
         )}
       </div>
     );
@@ -140,18 +136,16 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
         type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={isDisabled}
-        className="px-btn-orange flex items-center gap-2 py-3 px-5"
+        className="btn-secondary flex items-center gap-2 py-3 px-5"
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-        </svg>
+        <span className="material-symbols-outlined text-[20px]">upload_file</span>
         {getButtonText()}
       </button>
       {state === 'idle' && (
         <p className="text-sm text-on-surface-variant font-label-md">{dict.pdfImporter.dropzone}</p>
       )}
       {state === 'error' && (
-        <p className="text-sm text-red-400 font-label-md">{error}</p>
+        <p className="text-sm text-error font-label-md">{error}</p>
       )}
     </div>
   );

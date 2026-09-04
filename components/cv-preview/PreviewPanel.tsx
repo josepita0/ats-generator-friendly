@@ -1,12 +1,10 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import { pdf } from '@react-pdf/renderer';
-import { CVData } from '@/types/cv';
-import { Dictionary } from '@/lib/i18n/dictionaries';
-import { CVPreview } from '@/components/cv-preview';
-import { CVDocument } from '@/components/pdf';
-import { downloadPdf } from '@/lib/pdf';
+import { useCallback } from "react";
+import { CVData } from "@/types/cv";
+import { Dictionary } from "@/lib/i18n/dictionaries";
+import { CVPreview } from "@/components/cv-preview";
+import { generateCvPdf } from "@/lib/pdf/generate";
 
 interface Props {
   isOpen: boolean;
@@ -18,49 +16,74 @@ interface Props {
 export function PreviewPanel({ isOpen, onClose, data, dict }: Props) {
   const handleDownloadPDF = useCallback(async () => {
     if (!data) return;
-    const blob = await pdf(<CVDocument data={data} dict={dict} />).toBlob();
-    downloadPdf(blob, `${data.personalInfo.name.replace(/\s+/g, '_')}_CV.pdf`);
+    await generateCvPdf(data, dict);
   }, [data, dict]);
 
   return (
     <>
+      {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-[#06132E]/80 z-[90] transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-[90] transition-opacity duration-300 ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
       />
+
+      {/* Panel */}
       <div
-        className={`slide-panel fixed top-0 right-0 w-full md:w-1/2 lg:w-1/3 h-full bg-[#0E4A57] z-[100] flex flex-col border-l-4 border-[#F86B2A] border-t-4 border-t-[#F86B2A] border-b-4 border-b-[#F86B2A] shadow-[-8px_0px_0px_#06132E] ${
-          isOpen ? 'open' : ''
+        className={`fixed top-0 right-0 h-full w-full md:w-[500px] lg:w-[600px] bg-surface-container-lowest z-[100] flex flex-col border-l border-outline-variant/30 shadow-[-8px_0_30px_-4px_rgba(27,36,30,0.1)] transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="px-4 py-3 bg-[#3B2E67] border-b-4 border-[#F86B2A] flex justify-between items-center">
-          <h2
-            className="text-[#FFC329] font-headline-md uppercase"
-            style={{ fontSize: '0.6rem', textShadow: '1px 1px 0 #06132E' }}
+        {/* Header */}
+        <div className="flex items-center justify-between px-spacing-lg py-4 bg-surface-container-low border-b border-outline-variant/30">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-[20px]">
+              visibility
+            </span>
+            <h2 className="font-title-md text-title-md text-primary font-semibold">
+              Vista Previa ATS
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-9 h-9 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors flex items-center justify-center"
           >
-            ATS PREVIEW
-          </h2>
-          <button onClick={onClose} className="text-[#FFF3D5] hover:text-[#FFC329] transition-colors cursor-pointer">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <span className="material-symbols-outlined text-on-surface-variant text-[18px]">
+              close
+            </span>
           </button>
         </div>
-        <div className="flex-1 bg-[#071539] p-4 overflow-y-auto flex justify-center items-start">
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto  p-spacing-lg">
           {data ? (
             <CVPreview data={data} dict={dict} />
           ) : (
-            <p className="text-[#FFF3D5]/60 mt-10">No data yet</p>
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <span className="material-symbols-outlined text-outline-variant text-[48px] mb-3">
+                description
+              </span>
+              <p className="text-on-surface-variant font-body-md">
+                Sin datos aún
+              </p>
+              <p className="text-on-surface-variant/60 font-body-sm text-body-sm mt-1">
+                Completá el formulario para ver la vista previa
+              </p>
+            </div>
           )}
         </div>
-        <div className="p-5 bg-[#0E4A57] border-t-4 border-[#F86B2A] flex justify-end gap-3">
+
+        {/* Footer */}
+        <div className="p-spacing-lg bg-surface-container-low border-t border-outline-variant/30">
           <button
             onClick={handleDownloadPDF}
             disabled={!data}
-            className="px-btn-orange py-2 px-6 text-sm"
+            className="btn-primary flex items-center gap-2 w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
+            <span className="material-symbols-outlined text-[18px]">
+              download
+            </span>
             {dict.form.downloadPdf}
           </button>
         </div>

@@ -16,55 +16,55 @@ export function SummarySection({ dict, forceCollapsed }: Props) {
   const effectiveCollapsed = forceCollapsed ?? collapsed;
 
   return (
-    <div className="section-card">
-      <div className="section-header rounded-t-lg">
-        <div className="section-header-title">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-          </svg>
+    <div className="bg-surface-container-lowest rounded-3xl shadow-card">
+      <div className="flex items-center justify-between px-spacing-lg py-4 border-b border-outline-variant/30">
+        <div className="flex items-center gap-2 font-title-sm text-title-sm text-on-surface">
+          <span className="material-symbols-outlined text-[18px]">
+            edit_note
+          </span>
           {dict.form.summary}
         </div>
         <button
           type="button"
           onClick={() => setCollapsed(!effectiveCollapsed)}
-          className="text-[#FFF3D5] hover:brightness-110 cursor-pointer"
+          className="text-on-surface-variant hover:text-on-surface cursor-pointer transition-colors"
         >
-          <svg
-            className={`w-5 h-5 chevron-icon ${!effectiveCollapsed ? 'rotated' : ''}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <span
+            className={`material-symbols-outlined text-[20px] transition-transform ${
+              !effectiveCollapsed ? "" : "rotate-180"
+            }`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={3}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
+            expand_more
+          </span>
         </button>
       </div>
-      <div className={`section-collapse ${!effectiveCollapsed ? 'open' : ''}`}>
-        <div>
-          <div className="section-body space-y-4 rounded-b-lg">
-            <div>
-              <label className="px-label">{dict.fields.summaryEs}</label>
-              <textarea
-                {...register("summary.es", {
-                  required: dict.validation.required,
-                })}
-                rows={3}
-                className="px-input resize-none"
-              />
-            </div>
-            <div>
-              <label className="px-label">{dict.fields.summaryEn}</label>
-              <textarea
-                {...register("summary.en")}
-                rows={3}
-                className="px-input resize-none"
-              />
-            </div>
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          !effectiveCollapsed ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="p-spacing-lg space-y-3">
+          <div>
+            <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+              {dict.fields.summaryEs}
+            </label>
+            <textarea
+              {...register("summary.es", {
+                required: dict.validation.required,
+              })}
+              rows={3}
+              className="input-field resize-none"
+            />
+          </div>
+          <div>
+            <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+              {dict.fields.summaryEn}
+            </label>
+            <textarea
+              {...register("summary.en")}
+              rows={3}
+              className="input-field resize-none"
+            />
           </div>
         </div>
       </div>

@@ -7,4 +7,3 @@ export { LanguagesSection } from './LanguagesSection';
 export { PdfImporter } from './PdfImporter';
 export { TranslateButton } from './TranslateButton';
 export { MonthYearPicker } from './MonthYearPicker';
-export { AppHeader } from './AppHeader';

@@ -18,12 +18,12 @@ export function ExperienceSection({ dict, forceCollapsed }: Props) {
   const effectiveCollapsed = forceCollapsed ?? collapsed;
 
   return (
-    <div className="section-card">
-      <div className="section-header rounded-t-lg">
-        <div className="section-header-title">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" />
-          </svg>
+    <div className="bg-surface-container-lowest rounded-3xl shadow-card">
+      <div className="flex items-center justify-between px-spacing-lg py-4 border-b border-outline-variant/30">
+        <div className="flex items-center gap-2 font-title-sm text-title-sm text-on-surface">
+          <span className="material-symbols-outlined text-[18px]">
+            work
+          </span>
           {dict.form.experience}
         </div>
         <div className="flex items-center gap-2">
@@ -41,87 +41,72 @@ export function ExperienceSection({ dict, forceCollapsed }: Props) {
                 descriptions: { es: "", en: "" },
               })
             }
-            className="px-btn-add"
+            className="btn-secondary flex items-center gap-1.5 text-[0.8125rem]"
           >
-            + {dict.form.add}
+            <span className="material-symbols-outlined text-[16px]">add</span>
+            {dict.form.add}
           </button>
           <button
             type="button"
             onClick={() => setCollapsed(!effectiveCollapsed)}
-            className="text-[#FFF3D5] hover:brightness-110 cursor-pointer"
+            className="text-on-surface-variant hover:text-on-surface cursor-pointer transition-colors"
           >
-            <svg
-              className={`w-5 h-5 chevron-icon ${!effectiveCollapsed ? 'rotated' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <span
+              className={`material-symbols-outlined text-[20px] transition-transform ${
+                !effectiveCollapsed ? "" : "rotate-180"
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+              expand_more
+            </span>
           </button>
         </div>
       </div>
-      <div className={`section-collapse ${!effectiveCollapsed ? 'open' : ''}`}>
-        <div>
-          <div className="section-body space-y-4 rounded-b-lg">
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          !effectiveCollapsed ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="p-spacing-lg space-y-3">
           {fields.map((field, index) => (
             <div
               key={field.id}
-              className="bg-[#FFF3D5]/40 border-2 border-[#06132E] rounded-lg p-4 relative"
+              className="bg-surface-container-low rounded-2xl border border-outline-variant/30 p-4 relative"
             >
               <button
                 type="button"
                 onClick={() => remove(index)}
-                className="px-remove-btn"
+                className="absolute top-3 right-3 w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-error-container hover:text-on-error-container transition-colors cursor-pointer"
+                aria-label={dict.form.remove}
               >
-                ✕
+                <span className="material-symbols-outlined text-[14px]">
+                  close
+                </span>
               </button>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="px-label">{dict.fields.company}</label>
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                <div className="sm:col-span-5">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.company}
+                  </label>
                   <input
                     {...register(`experience.${index}.company` as const, {
                       required: dict.validation.required,
                     })}
-                    className="px-input"
+                    className="input-field"
                   />
                 </div>
-                <div>
-                  <label className="px-label">{dict.fields.location}</label>
+                <div className="sm:col-span-4">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.location}
+                  </label>
                   <input
                     {...register(`experience.${index}.location` as const)}
-                    className="px-input"
+                    className="input-field"
                   />
                 </div>
-                <div>
-                  <label className="px-label">
-                    {dict.fields.position} (ES)
+                <div className="sm:col-span-3">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.startDate}
                   </label>
-                  <input
-                    {...register(`experience.${index}.position.es` as const, {
-                      required: dict.validation.required,
-                    })}
-                    className="px-input"
-                  />
-                </div>
-                <div>
-                  <label className="px-label">
-                    {dict.fields.position} (EN)
-                  </label>
-                  <input
-                    {...register(`experience.${index}.position.en` as const)}
-                    className="px-input"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-                <div>
-                  <label className="px-label">{dict.fields.startDate}</label>
                   <Controller
                     control={control}
                     name={`experience.${index}.startDate` as const}
@@ -137,26 +122,32 @@ export function ExperienceSection({ dict, forceCollapsed }: Props) {
                     )}
                   />
                 </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                 <div>
-                  <label className="px-label">{dict.fields.endDate}</label>
-                  <Controller
-                    control={control}
-                    name={`experience.${index}.endDate` as const}
-                    render={({ field: f }) => (
-                      <MonthYearPicker
-                        value={f.value}
-                        onChange={f.onChange}
-                        onBlur={f.onBlur}
-                        name={f.name}
-                        dict={dict}
-                      />
-                    )}
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.position} (ES)
+                  </label>
+                  <input
+                    {...register(`experience.${index}.position.es` as const, {
+                      required: dict.validation.required,
+                    })}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
+                    {dict.fields.position} (EN)
+                  </label>
+                  <input
+                    {...register(`experience.${index}.position.en` as const)}
+                    className="input-field"
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                 <div>
-                  <label className="px-label">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
                     {dict.fields.descriptions} (ES)
                   </label>
                   <textarea
@@ -165,11 +156,11 @@ export function ExperienceSection({ dict, forceCollapsed }: Props) {
                       { required: dict.validation.required },
                     )}
                     rows={4}
-                    className="px-input resize-none text-xs"
+                    className="input-field resize-none text-xs"
                   />
                 </div>
                 <div>
-                  <label className="px-label">
+                  <label className="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1.5 block">
                     {dict.fields.descriptions} (EN)
                   </label>
                   <textarea
@@ -177,13 +168,12 @@ export function ExperienceSection({ dict, forceCollapsed }: Props) {
                       `experience.${index}.descriptions.en` as const,
                     )}
                     rows={4}
-                    className="px-input resize-none text-xs"
+                    className="input-field resize-none text-xs"
                   />
                 </div>
               </div>
             </div>
           ))}
-        </div>
         </div>
       </div>
     </div>
