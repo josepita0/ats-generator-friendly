@@ -261,7 +261,8 @@ function JobMatcherPageInner() {
             <div className="mb-4">
               <ActionButtons
                 onAdaptWithAI={handleAnalyze}
-                disabled={!jobDescription.trim() || isAnalyzing}
+                disabled={!jobDescription.trim()}
+                isAnalyzing={isAnalyzing}
               />
             </div>
 

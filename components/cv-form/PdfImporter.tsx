@@ -90,8 +90,11 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
           onClick={() => fileInputRef.current?.click()}
           disabled={isDisabled}
           className="btn-secondary w-10 h-10 flex items-center justify-center p-0 !rounded-full"
+          title={isDisabled ? getButtonText() : undefined}
         >
-          <span className="material-symbols-outlined text-[18px]">upload_file</span>
+          <span className={`material-symbols-outlined text-[18px] ${isDisabled ? 'animate-pulse text-primary' : ''}`}>
+            {isDisabled ? 'hourglass_empty' : 'upload_file'}
+          </span>
         </button>
       </div>
     );
@@ -99,7 +102,7 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
 
   if (compact) {
     return (
-      <div className="relative">
+      <div className="relative group">
         <input
           ref={fileInputRef}
           type="file"
@@ -111,13 +114,18 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isDisabled}
-          className="btn-secondary flex items-center gap-1.5 text-[0.8125rem]"
+          className={`btn-secondary flex items-center gap-1.5 text-[0.8125rem] ${isDisabled ? 'ring-2 ring-primary/30' : ''}`}
         >
-          <span className="material-symbols-outlined text-[16px]">upload_file</span>
+          <span className={`material-symbols-outlined text-[16px] ${isDisabled ? 'animate-pulse text-primary' : ''}`}>
+            {isDisabled ? 'hourglass_empty' : 'upload_file'}
+          </span>
           {getButtonText()}
         </button>
+        {/* Tooltip on error */}
         {state === 'error' && (
-          <p className="absolute top-full left-0 mt-1 text-[10px] text-error font-label-xs whitespace-nowrap">{error}</p>
+          <p className="absolute top-full left-0 mt-1 text-[10px] text-error font-label-xs whitespace-nowrap z-10 bg-surface-container-lowest px-2 py-1 rounded shadow-lg">
+            {error}
+          </p>
         )}
       </div>
     );
@@ -136,9 +144,11 @@ export function PdfImporter({ onImport, dict, compact = false, mobile = false }:
         type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={isDisabled}
-        className="btn-secondary flex items-center gap-2 py-3 px-5"
+        className={`btn-secondary flex items-center gap-2 py-3 px-5 ${isDisabled ? 'ring-2 ring-primary/30' : ''}`}
       >
-        <span className="material-symbols-outlined text-[20px]">upload_file</span>
+        <span className={`material-symbols-outlined text-[20px] ${isDisabled ? 'animate-pulse text-primary' : ''}`}>
+          {isDisabled ? 'hourglass_empty' : 'upload_file'}
+        </span>
         {getButtonText()}
       </button>
       {state === 'idle' && (

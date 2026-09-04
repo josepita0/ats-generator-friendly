@@ -65,16 +65,21 @@ export function TranslateButton({ onTranslate, dict, getCvData, compact = false,
     }
   };
 
+  const isTranslating = state === 'translating';
+
   if (mobile) {
     return (
       <div className="relative">
         <button
           type="button"
           onClick={() => setShowDirectionPicker(!showDirectionPicker)}
-          disabled={state === 'translating'}
+          disabled={isTranslating}
           className="btn-secondary w-10 h-10 flex items-center justify-center p-0 !rounded-full"
+          title={isTranslating ? getButtonText() : undefined}
         >
-          <span className="material-symbols-outlined text-[18px]">translate</span>
+          <span className={`material-symbols-outlined text-[18px] ${isTranslating ? 'animate-pulse text-primary' : ''}`}>
+            {isTranslating ? 'hourglass_empty' : 'translate'}
+          </span>
         </button>
 
         {showDirectionPicker && (
@@ -119,7 +124,7 @@ export function TranslateButton({ onTranslate, dict, getCvData, compact = false,
         <select
           value={direction}
           onChange={(e) => setDirection(e.target.value as 'es-to-en' | 'en-to-es')}
-          disabled={state === 'translating'}
+          disabled={isTranslating}
           className="input-field w-auto text-xs py-1 px-2"
         >
           <option value="es-to-en">ES→EN</option>
@@ -128,14 +133,16 @@ export function TranslateButton({ onTranslate, dict, getCvData, compact = false,
         <button
           type="button"
           onClick={handleTranslate}
-          disabled={state === 'translating'}
-          className="btn-secondary flex items-center gap-1.5 text-[0.8125rem]"
+          disabled={isTranslating}
+          className={`btn-secondary flex items-center gap-1.5 text-[0.8125rem] ${isTranslating ? 'ring-2 ring-primary/30' : ''}`}
         >
-          <span className="material-symbols-outlined text-[16px]">translate</span>
+          <span className={`material-symbols-outlined text-[16px] ${isTranslating ? 'animate-pulse text-primary' : ''}`}>
+            {isTranslating ? 'hourglass_empty' : 'translate'}
+          </span>
           {getButtonText()}
         </button>
         {state === 'error' && (
-          <p className="absolute top-full left-0 mt-1 text-[10px] text-error font-label-xs whitespace-nowrap">{error}</p>
+          <p className="absolute top-full left-0 mt-1 text-[10px] text-error font-label-xs whitespace-nowrap z-10 bg-surface-container-lowest px-2 py-1 rounded shadow-lg">{error}</p>
         )}
       </div>
     );
@@ -148,7 +155,7 @@ export function TranslateButton({ onTranslate, dict, getCvData, compact = false,
         <select
           value={direction}
           onChange={(e) => setDirection(e.target.value as 'es-to-en' | 'en-to-es')}
-          disabled={state === 'translating'}
+          disabled={isTranslating}
           className="input-field w-auto rounded-full px-3 py-1 text-sm font-label-md"
         >
           <option value="es-to-en">{dict.translate.esToEn}</option>
@@ -158,10 +165,12 @@ export function TranslateButton({ onTranslate, dict, getCvData, compact = false,
       <button
         type="button"
         onClick={handleTranslate}
-        disabled={state === 'translating'}
-        className="btn-secondary flex items-center gap-2 px-6 py-4 font-label-md font-bold rounded-full transition-colors disabled:opacity-50"
+        disabled={isTranslating}
+        className={`btn-secondary flex items-center gap-2 px-6 py-4 font-label-md font-bold rounded-full transition-colors disabled:cursor-not-allowed ${isTranslating ? 'ring-2 ring-primary/30' : ''}`}
       >
-        <span className="material-symbols-outlined text-[20px]">translate</span>
+        <span className={`material-symbols-outlined text-[20px] ${isTranslating ? 'animate-pulse text-primary' : ''}`}>
+          {isTranslating ? 'hourglass_empty' : 'translate'}
+        </span>
         {getButtonText()}
       </button>
       {state === 'idle' && (
