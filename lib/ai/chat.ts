@@ -59,7 +59,7 @@ function flatSuggestionToTyped(sug: z.infer<typeof flatSuggestionSchema>): Sugge
   }
 }
 
-export function sanitizeSuggestions(rawSuggestions: unknown[], cvData: CVData): Suggestion[] {
+export function sanitizeSuggestions(rawSuggestions: unknown, cvData: CVData): Suggestion[] {
   if (!Array.isArray(rawSuggestions)) return [];
 
   return rawSuggestions

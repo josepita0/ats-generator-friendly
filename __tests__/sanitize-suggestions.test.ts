@@ -132,7 +132,9 @@ describe('sanitizeSuggestions', () => {
     const result = sanitizeSuggestions(rawSuggestions, mockCVData);
     expect(result).toHaveLength(1);
     expect(result[0].target.kind).toBe('experience');
-    expect(result[0].target.entryId).toBe('exp-1');
+    if (result[0].target.kind === 'experience') {
+      expect(result[0].target.entryId).toBe('exp-1');
+    }
   });
 
   it('accepts valid education suggestion', () => {
