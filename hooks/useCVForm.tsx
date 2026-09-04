@@ -96,13 +96,25 @@ export function useCVForm() {
   // data against what we last synced to determine if this is:
   //   - Our own debounced sync (deepEqual match → no reset needed)
   //   - An external mutation like import/translation (deepEqual fails → reset)
+  //   - Initial hydration from localStorage (lastSyncedData is null)
   const lastSyncedData = useRef<CVData | null>(null);
+  const hasHydrated = useRef(false);
 
   useEffect(() => {
-    if (!storeCvData || dataVersion === 0) return;
+    // Wait for store to hydrate from localStorage
+    if (!storeCvData) return;
 
-    // Short-circuit: first load, no comparison needed
-    if (lastSyncedData.current === null) {
+    // First load after hydration — always reset to populate the form
+    if (!hasHydrated.current) {
+      hasHydrated.current = true;
+      lastSyncedData.current = storeCvData;
+      reset(normalizeDates(storeCvData), { keepDefaultValues: false });
+      return;
+    }
+
+    // If dataVersion is 0 and we already hydrated, this is a fresh store
+    // (e.g., after clearAll) — reset to empty
+    if (dataVersion === 0) {
       lastSyncedData.current = storeCvData;
       reset(normalizeDates(storeCvData), { keepDefaultValues: false });
       return;
