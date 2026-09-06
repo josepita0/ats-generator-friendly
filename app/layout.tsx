@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { AppNavigation } from "@/components/navigation/AppNavigation";
 import "./globals.css";
 
@@ -84,6 +85,7 @@ export default function RootLayout({
             Avora Editorial Suite &bull; Privacidad total en el navegador
           </p>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
