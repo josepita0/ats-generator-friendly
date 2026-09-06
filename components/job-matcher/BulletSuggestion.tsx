@@ -8,6 +8,16 @@ interface Props {
   onEditManual?: () => void;
   onDiscard?: () => void;
   onAccept?: () => void;
+  // Edit mode props
+  isEditing?: boolean;
+  editText?: string;
+  onEditTextChange?: (text: string) => void;
+  onSaveEdit?: () => void;
+  onCancelEdit?: () => void;
+  // Regenerating state
+  isRegenerating?: boolean;
+  // Accepted state
+  isAccepted?: boolean;
 }
 
 export function BulletSuggestionCard({
@@ -16,6 +26,13 @@ export function BulletSuggestionCard({
   onEditManual,
   onDiscard,
   onAccept,
+  isEditing = false,
+  editText = '',
+  onEditTextChange,
+  onSaveEdit,
+  onCancelEdit,
+  isRegenerating = false,
+  isAccepted = false,
 }: Props) {
   return (
     <div className="card">
@@ -65,12 +82,45 @@ export function BulletSuggestionCard({
               auto_awesome
             </span>
             <span className="font-label-xs text-[0.6875rem] text-primary uppercase tracking-wider font-semibold">
-              Adaptada ATS con Gemini
+              {isEditing ? 'Editando' : 'Adaptada ATS con Gemini'}
             </span>
           </div>
-          <p className="font-body-sm text-[0.8125rem] text-on-surface leading-relaxed">
-            {suggestion.adaptedText}
-          </p>
+          {isEditing ? (
+            <div className="space-y-2">
+              <textarea
+                className="input-field w-full min-h-[100px] resize-y font-body-sm text-[0.8125rem]"
+                value={editText}
+                onChange={(e) => onEditTextChange?.(e.target.value)}
+                aria-label="Editar sugerencia adaptada"
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={onSaveEdit}
+                  className="btn-primary flex items-center gap-1 text-[0.75rem] px-3 py-1"
+                >
+                  <span className="material-symbols-outlined text-[14px]">
+                    check
+                  </span>
+                  Guardar
+                </button>
+                <button
+                  type="button"
+                  onClick={onCancelEdit}
+                  className="btn-ghost flex items-center gap-1 text-[0.75rem] px-3 py-1"
+                >
+                  <span className="material-symbols-outlined text-[14px]">
+                    close
+                  </span>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="font-body-sm text-[0.8125rem] text-on-surface leading-relaxed">
+              {suggestion.adaptedText}
+            </p>
+          )}
           <div className="flex items-center gap-2 mt-2">
             <span className="font-label-xs text-[0.6875rem] text-primary">
               Keywords integradas orgánicamente: {suggestion.keywordsIntegrated}
@@ -84,10 +134,13 @@ export function BulletSuggestionCard({
         <button
           type="button"
           onClick={onRegenerate}
+          disabled={isRegenerating}
           className="btn-secondary flex items-center gap-2 text-[0.8125rem]"
         >
-          <span className="material-symbols-outlined text-[16px]">refresh</span>
-          Regenerar con Gemini
+          <span className={`material-symbols-outlined text-[16px] ${isRegenerating ? 'animate-spin' : ''}`}>
+            {isRegenerating ? 'progress_activity' : 'refresh'}
+          </span>
+          {isRegenerating ? 'Regenerando...' : 'Regenerar con Gemini'}
         </button>
         <button
           type="button"
@@ -109,10 +162,17 @@ export function BulletSuggestionCard({
         <button
           type="button"
           onClick={onAccept}
-          className="btn-primary flex items-center gap-2 text-[0.8125rem]"
+          disabled={isAccepted}
+          className={`flex items-center gap-2 text-[0.8125rem] ${
+            isAccepted
+              ? 'bg-primary-container text-on-primary-container cursor-default'
+              : 'btn-primary'
+          }`}
         >
-          <span className="material-symbols-outlined text-[16px]">check</span>
-          Aceptar cambio en CV
+          <span className="material-symbols-outlined text-[16px]">
+            {isAccepted ? 'check_circle' : 'check'}
+          </span>
+          {isAccepted ? 'Aceptado' : 'Aceptar cambio en CV'}
         </button>
       </div>
     </div>

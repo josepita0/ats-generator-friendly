@@ -13,92 +13,11 @@ import {
   ATSReadingParameters,
   ActionButtons,
 } from "@/components/job-matcher";
+import { CVPreview } from "@/components/cv-preview";
 import {
-  EXAMPLE_JOB_DESCRIPTION,
   type JobAnalysisResult,
   type BulletSuggestion,
 } from "@/types/job-matcher";
-
-/* ── Mock analysis (no real AI) ─────────────────────── */
-
-function mockAnalyzeJob(jobDescription: string): JobAnalysisResult {
-  const desc = jobDescription.toLowerCase();
-  const allKeywords = [
-    "React",
-    "Node.js",
-    "TypeScript",
-    "PostgreSQL",
-    "REST APIs",
-    "Git",
-    "Docker",
-    "AWS Lambda",
-    "Microfrontends",
-    "CI/CD",
-    "Agile",
-    "GraphQL",
-    "AWS",
-    "Python",
-    "Java",
-  ];
-
-  const found = allKeywords.filter(
-    (kw) =>
-      desc.includes(kw.toLowerCase()) ||
-      desc.includes(kw.toLowerCase().replace(".", "")),
-  );
-  const missing = allKeywords
-    .filter((kw) => {
-      const lower = kw.toLowerCase().replace(".", "");
-      return !desc.includes(lower) && !desc.includes(kw.toLowerCase());
-    })
-    .slice(0, 4);
-
-  const matchScore = Math.min(98, 55 + found.length * 6);
-  const technicalMatch = Math.min(98, 60 + found.length * 5);
-  const atsStructure =
-    desc.includes("requirements") || desc.includes("responsibilities")
-      ? 95
-      : 72;
-  const softSkillsMatch =
-    desc.includes("communication") || desc.includes("team")
-      ? desc.includes("lead") || desc.includes("mentor")
-        ? 78
-        : 65
-      : 45;
-
-  const suggestions: BulletSuggestion[] = [
-    {
-      originalText:
-        "Desarrollé la arquitectura del sistema de pagos utilizando Node.js y PostgreSQL, implementando endpoints RESTful para procesar transacciones en tiempo real.",
-      adaptedText:
-        "Diseñé e implementé la arquitectura de microservicios del sistema de pagos con Node.js, AWS Lambda y PostgreSQL, creando APIs RESTful que procesan +10K transacciones diarias con 99.9% de uptime.",
-      position: "Senior Full Stack Developer",
-      period: "2022 — Presente",
-      matchPointsGained: 22,
-      keywordsIntegrated: 4,
-    },
-    {
-      originalText:
-        "Lideré el equipo de frontend en la migración de Angular a React, estableciendo estándares de código y realizando code reviews semanales.",
-      adaptedText:
-        "Lideré la migración estratégica de Angular a React y TypeScript para 3 microfrontends, estableciendo guías de arquitectura y mentoreando a 4 desarrolladores junior en prácticas de CI/CD con Docker.",
-      position: "Frontend Tech Lead",
-      period: "2021 — 2022",
-      matchPointsGained: 18,
-      keywordsIntegrated: 5,
-    },
-  ];
-
-  return {
-    matchScore,
-    technicalMatch,
-    atsStructure,
-    softSkillsMatch,
-    foundKeywords: found.slice(0, 6),
-    missingKeywords: missing,
-    suggestions,
-  };
-}
 
 /* ── Main Page ──────────────────────────────────────── */
 
@@ -116,12 +35,29 @@ function JobMatcherPageInner() {
   // ── Store-backed job description ─────────────────
   const jobDescription = useCVStore((s) => s.jobDescription);
   const setJobDescription = useCVStore((s) => s.setJobDescription);
+  const apiKey = useCVStore((s) => s.apiKey);
+  const selectedModel = useCVStore((s) => s.selectedModel);
+  const atsTone = useCVStore((s) => s.atsTone);
 
   // Job matcher UI state
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] =
     useState<JobAnalysisResult | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Suggestion interaction state
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<number>>(
+    new Set(),
+  );
+  const [editingSuggestion, setEditingSuggestion] = useState<number | null>(
+    null,
+  );
+  const [editText, setEditText] = useState<string>("");
+  const [regeneratingIdx, setRegeneratingIdx] = useState<number | null>(null);
+  const [acceptedSuggestions, setAcceptedSuggestions] = useState<Set<number>>(
+    new Set(),
+  );
 
   // Derived stats
   const characterCount = jobDescription.length;
@@ -134,19 +70,54 @@ function JobMatcherPageInner() {
     return reqSection ? Math.max(bullets.length, 3) : bullets.length;
   }, [jobDescription]);
 
-  // Analyze job description
-  const handleAnalyze = useCallback(() => {
-    if (!jobDescription.trim()) return;
-    setIsAnalyzing(true);
-    // Simulate AI processing delay
-    setTimeout(() => {
-      const result = mockAnalyzeJob(jobDescription);
-      setAnalysisResult(result);
-      setIsAnalyzing(false);
-    }, 1200);
-  }, [jobDescription]);
+  // Analyze job description via real AI endpoint
+  const handleAnalyze = useCallback(async () => {
+    if (!jobDescription.trim() || !apiKey || !form.formData) return;
 
-  // Extract entities (mock)
+    setIsAnalyzing(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/ai/job-matcher", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          apiKey,
+          model: selectedModel,
+          tone: atsTone,
+          jobDescription,
+          cvData: {
+            personalInfo: form.formData.personalInfo,
+            summary: form.formData.summary,
+            experience: form.formData.experience,
+            education: form.formData.education,
+            skills: form.formData.skills,
+            languages: form.formData.languages,
+            language: form.formData.language,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        throw new Error(
+          body?.error ||
+            `Failed to analyze job description (${response.status})`,
+        );
+      }
+
+      const result = await response.json();
+      setAnalysisResult(result);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred",
+      );
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, [jobDescription, apiKey, selectedModel, atsTone, form.formData]);
+
+  // Extract entities (mock — wraps analyze)
   const handleExtractEntities = useCallback(() => {
     setIsExtracting(true);
     setTimeout(() => {
@@ -157,32 +128,172 @@ function JobMatcherPageInner() {
 
   // Accept suggestion into CV
   const handleAcceptSuggestion = useCallback(
-    (suggestion: BulletSuggestion) => {
+    (suggestion: BulletSuggestion, idx: number) => {
       if (!form.formData || !form.formData.experience.length) return;
 
-      // Update the first experience entry's descriptions as a demo
       const updated = { ...form.formData };
-      const firstExp = updated.experience[0];
-      if (firstExp) {
-        const currentDesc =
-          updated.language === "es"
-            ? firstExp.descriptions.es
-            : firstExp.descriptions.en;
-        const newDesc = currentDesc
-          ? `${currentDesc}\n\n${suggestion.adaptedText}`
-          : suggestion.adaptedText;
 
-        if (updated.language === "es") {
-          firstExp.descriptions = { ...firstExp.descriptions, es: newDesc };
-        } else {
-          firstExp.descriptions = { ...firstExp.descriptions, en: newDesc };
-        }
+      // Find the experience that contains the originalText
+      const targetExpIndex = updated.experience.findIndex((exp) => {
+        const desc =
+          updated.language === "es"
+            ? exp.descriptions.es
+            : exp.descriptions.en;
+        return desc && desc.includes(suggestion.originalText);
+      });
+
+      if (targetExpIndex === -1) return; // No match found
+
+      const targetExp = updated.experience[targetExpIndex];
+
+      // Replace the exact original text with the adapted text
+      const currentDesc =
+        updated.language === "es"
+          ? targetExp.descriptions.es
+          : targetExp.descriptions.en;
+      const newDesc = currentDesc?.replace(
+        suggestion.originalText,
+        suggestion.adaptedText,
+      );
+
+      if (updated.language === "es") {
+        targetExp.descriptions = { ...targetExp.descriptions, es: newDesc };
+      } else {
+        targetExp.descriptions = { ...targetExp.descriptions, en: newDesc };
       }
 
       form.setValue("experience", updated.experience);
+
+      // Track accepted suggestion for visual feedback
+      setAcceptedSuggestions((prev) => {
+        const next = new Set(prev);
+        next.add(idx);
+        return next;
+      });
     },
     [form],
   );
+
+  // Discard suggestion
+  const handleDiscardSuggestion = useCallback((idx: number) => {
+    setDismissedSuggestions((prev) => {
+      const next = new Set(prev);
+      next.add(idx);
+      return next;
+    });
+  }, []);
+
+  // Start editing suggestion
+  const handleStartEdit = useCallback(
+    (idx: number) => {
+      if (!analysisResult) return;
+      setEditingSuggestion(idx);
+      setEditText(analysisResult.suggestions[idx]?.adaptedText ?? "");
+    },
+    [analysisResult],
+  );
+
+  // Save edited suggestion
+  const handleSaveEdit = useCallback(() => {
+    if (editingSuggestion === null || !analysisResult) return;
+    const updated = { ...analysisResult };
+    updated.suggestions = [...updated.suggestions];
+    updated.suggestions[editingSuggestion] = {
+      ...updated.suggestions[editingSuggestion],
+      adaptedText: editText,
+    };
+    setAnalysisResult(updated);
+    setEditingSuggestion(null);
+    setEditText("");
+  }, [editingSuggestion, editText, analysisResult]);
+
+  // Cancel editing
+  const handleCancelEdit = useCallback(() => {
+    setEditingSuggestion(null);
+    setEditText("");
+  }, []);
+
+  // Regenerate a single suggestion via Gemini
+  const handleRegenerateSuggestion = useCallback(
+    async (idx: number) => {
+      if (!analysisResult || !apiKey || !form.formData) return;
+      const suggestion = analysisResult.suggestions[idx];
+      if (!suggestion) return;
+
+      setRegeneratingIdx(idx);
+      try {
+        const response = await fetch("/api/ai/job-matcher", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            apiKey,
+            model: selectedModel,
+            tone: atsTone,
+            jobDescription,
+            cvData: {
+              personalInfo: form.formData.personalInfo,
+              summary: form.formData.summary,
+              experience: form.formData.experience,
+              education: form.formData.education,
+              skills: form.formData.skills,
+              languages: form.formData.languages,
+              language: form.formData.language,
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to regenerate (${response.status})`);
+        }
+
+        const result: JobAnalysisResult = await response.json();
+
+        // Try to find a matching suggestion by originalText
+        const match = result.suggestions.find(
+          (s) => s.originalText === suggestion.originalText,
+        );
+
+        if (match) {
+          const updated = { ...analysisResult };
+          updated.suggestions = [...updated.suggestions];
+          updated.suggestions[idx] = match;
+          setAnalysisResult(updated);
+        } else {
+          // If no exact match, replace with the first suggestion from new results
+          if (result.suggestions.length > 0) {
+            const updated = { ...analysisResult };
+            updated.suggestions = [...updated.suggestions];
+            updated.suggestions[idx] = result.suggestions[0];
+            setAnalysisResult(updated);
+          }
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Error al regenerar la sugerencia",
+        );
+      } finally {
+        setRegeneratingIdx(null);
+      }
+    },
+    [
+      analysisResult,
+      apiKey,
+      selectedModel,
+      atsTone,
+      jobDescription,
+      form.formData,
+    ],
+  );
+
+  // Filtered suggestions (remove dismissed)
+  const visibleSuggestions = useMemo(() => {
+    if (!analysisResult) return [];
+    return analysisResult.suggestions.filter(
+      (_, idx) => !dismissedSuggestions.has(idx),
+    );
+  }, [analysisResult, dismissedSuggestions]);
 
   // Loading state
   if (!form.mounted) {
@@ -263,8 +374,26 @@ function JobMatcherPageInner() {
                 onAdaptWithAI={handleAnalyze}
                 disabled={!jobDescription.trim()}
                 isAnalyzing={isAnalyzing}
+                hasApiKey={!!apiKey}
               />
             </div>
+
+            {/* Current CV Preview */}
+            {form.formData && (
+              <div className="card mb-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="material-symbols-outlined text-[18px] text-primary">
+                    description
+                  </span>
+                  <h3 className="font-title-md text-[0.9375rem] font-semibold text-on-surface">
+                    Tu CV actual
+                  </h3>
+                </div>
+                <div className="max-h-[500px] overflow-y-auto custom-scroll">
+                  <CVPreview data={form.formData} dict={form.dict} />
+                </div>
+              </div>
+            )}
 
             {/* Loading state */}
             {isAnalyzing && (
@@ -279,8 +408,33 @@ function JobMatcherPageInner() {
               </div>
             )}
 
+            {/* Error state */}
+            {error && !isAnalyzing && (
+              <div className="card border border-error/30 bg-error/5 flex flex-col items-center py-8 px-6 text-center">
+                <span className="material-symbols-outlined text-error text-[36px] mb-3">
+                  error
+                </span>
+                <p className="font-body-md text-on-surface mb-1">
+                  Error al analizar la vacante
+                </p>
+                <p className="font-body-sm text-on-surface-variant/70 text-[0.8125rem] mb-4 max-w-md">
+                  {error}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleAnalyze}
+                  className="btn-secondary flex items-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    refresh
+                  </span>
+                  Reintentar
+                </button>
+              </div>
+            )}
+
             {/* Results */}
-            {analysisResult && !isAnalyzing && (
+            {analysisResult && !isAnalyzing && !error && (
               <div className="space-y-4">
                 {/* Score card */}
                 <MatchScoreCard
@@ -297,49 +451,60 @@ function JobMatcherPageInner() {
                 />
 
                 {/* Bullet suggestions */}
-                {analysisResult.suggestions.map((suggestion, idx) => (
-                  <BulletSuggestionCard
-                    key={idx}
-                    suggestion={suggestion}
-                    onRegenerate={() => {
-                      console.log("Regenerate suggestion", idx);
-                      // TODO: Call Gemini to regenerate
-                    }}
-                    onEditManual={() => {
-                      console.log("Edit suggestion manually", idx);
-                      // TODO: Enable manual editing
-                    }}
-                    onDiscard={() => {
-                      // TODO: dismiss suggestion
-                    }}
-                    onAccept={() => handleAcceptSuggestion(suggestion)}
-                  />
-                ))}
-              </div>
-            )}
+                {visibleSuggestions.length > 0 ? (
+                  visibleSuggestions.map((suggestion, displayIdx) => {
+                    // Find original index in analysisResult for state tracking
+                    const originalIdx =
+                      analysisResult!.suggestions.indexOf(suggestion);
+                    const isEditing = editingSuggestion === originalIdx;
+                    const isRegenerating = regeneratingIdx === originalIdx;
 
-            {/* Empty state */}
-            {!analysisResult && !isAnalyzing && (
-              <div className="card flex flex-col items-center justify-center py-20 text-center">
-                <span className="material-symbols-outlined text-outline-variant text-[48px] mb-3">
-                  work_outline
-                </span>
-                <p className="text-on-surface-variant font-body-md">
-                  Pegá una descripción de vacante para analizar
-                </p>
-                <p className="text-on-surface-variant/60 font-body-sm text-[0.8125rem] mt-1 mb-4">
-                  El sistema comparará los requisitos con tu CV actual
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setJobDescription(EXAMPLE_JOB_DESCRIPTION)}
-                  className="btn-secondary flex items-center gap-2"
-                >
-                  <span className="material-symbols-outlined text-[16px]">
-                    science
-                  </span>
-                  Cargar ejemplo de vacante
-                </button>
+                    return (
+                      <BulletSuggestionCard
+                        key={originalIdx}
+                        suggestion={suggestion}
+                        isEditing={isEditing}
+                        editText={editText}
+                        onEditTextChange={setEditText}
+                        isRegenerating={isRegenerating}
+                        onRegenerate={() =>
+                          handleRegenerateSuggestion(originalIdx)
+                        }
+                        onEditManual={() => handleStartEdit(originalIdx)}
+                        onSaveEdit={handleSaveEdit}
+                        onCancelEdit={handleCancelEdit}
+                        onDiscard={() => handleDiscardSuggestion(originalIdx)}
+                        isAccepted={acceptedSuggestions.has(originalIdx)}
+                        onAccept={() =>
+                          handleAcceptSuggestion(suggestion, originalIdx)
+                        }
+                      />
+                    );
+                  })
+                ) : analysisResult && !isAnalyzing ? (
+                  <div className="card flex flex-col items-center justify-center py-12 text-center">
+                    <span className="material-symbols-outlined text-outline-variant text-[40px] mb-3">
+                      check_circle
+                    </span>
+                    <p className="font-body-md text-on-surface-variant">
+                      Todas las sugerencias fueron descartadas
+                    </p>
+                    <p className="font-body-sm text-on-surface-variant/60 text-[0.8125rem] mt-1 mb-4">
+                      Podés re-analizar la oferta para obtener nuevas
+                      sugerencias
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleAnalyze}
+                      className="btn-secondary flex items-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        refresh
+                      </span>
+                      Re-analizar Oferta
+                    </button>
+                  </div>
+                ) : null}
               </div>
             )}
           </div>

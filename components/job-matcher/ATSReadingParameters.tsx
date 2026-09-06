@@ -1,11 +1,24 @@
 'use client';
 
+import { useCVStore, type ATSTone, type GeminiModel } from '@/stores/cvStore';
+
 interface ATSParameter {
   icon: string;
   label: string;
   value: string;
   variant: 'success' | 'info';
 }
+
+const TONE_DISPLAY: Record<ATSTone, string> = {
+  quantitative: 'Cuantitativo ATS',
+  concise: 'Conciso Directo',
+  executive: 'Ejecutivo C-Level',
+};
+
+const MODEL_DISPLAY: Record<GeminiModel, string> = {
+  flash: 'Gemini 3.6 Flash',
+  pro: 'Gemini 2.5 Pro',
+};
 
 const DEFAULT_PARAMETERS: ATSParameter[] = [
   {
@@ -29,6 +42,25 @@ const DEFAULT_PARAMETERS: ATSParameter[] = [
 ];
 
 export function ATSReadingParameters() {
+  const atsTone = useCVStore((s) => s.atsTone);
+  const selectedModel = useCVStore((s) => s.selectedModel);
+
+  const dynamicParameters: ATSParameter[] = [
+    {
+      icon: 'smart_toy',
+      label: 'Modelo de inferencia',
+      value: MODEL_DISPLAY[selectedModel],
+      variant: 'info',
+    },
+    {
+      icon: 'tune',
+      label: 'Tono de redacción',
+      value: TONE_DISPLAY[atsTone],
+      variant: 'info',
+    },
+    ...DEFAULT_PARAMETERS,
+  ];
+
   return (
     <div className="card">
       <div className="flex items-center gap-2 mb-3">
@@ -41,7 +73,7 @@ export function ATSReadingParameters() {
       </div>
 
       <div className="space-y-2">
-        {DEFAULT_PARAMETERS.map((param) => (
+        {dynamicParameters.map((param) => (
           <div
             key={param.label}
             className="flex items-center justify-between py-1.5"

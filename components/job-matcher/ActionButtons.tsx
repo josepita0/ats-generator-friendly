@@ -1,34 +1,41 @@
-'use client';
+"use client";
 
 interface Props {
   onAdaptWithAI?: () => void;
-  onImportCV?: () => void;
   disabled?: boolean;
   isAnalyzing?: boolean;
+  hasApiKey?: boolean;
 }
 
-export function ActionButtons({ onAdaptWithAI, onImportCV, disabled = false, isAnalyzing = false }: Props) {
+export function ActionButtons({
+  onAdaptWithAI,
+  disabled = false,
+  isAnalyzing = false,
+  hasApiKey = true,
+}: Props) {
   return (
-    <div className="space-y-2">
+    <div>
       <button
         type="button"
         onClick={onAdaptWithAI}
-        disabled={disabled}
-        className={`btn-primary flex items-center justify-center gap-2 w-full disabled:cursor-not-allowed ${isAnalyzing ? 'ring-2 ring-primary/30' : ''}`}
+        disabled={disabled || !hasApiKey}
+        title={
+          !hasApiKey
+            ? "Configurá tu API Key en Settings para usar el análisis con Gemini"
+            : undefined
+        }
+        className={`btn-primary flex items-center justify-center gap-2 w-full disabled:cursor-not-allowed ${isAnalyzing ? "ring-2 ring-primary/30" : ""}`}
       >
-        <span className={`material-symbols-outlined text-[18px] ${isAnalyzing ? 'animate-pulse' : ''}`}>
-          {isAnalyzing ? 'hourglass_empty' : 'auto_awesome'}
+        <span
+          className={`material-symbols-outlined text-[18px] ${isAnalyzing ? "animate-pulse" : ""}`}
+        >
+          {isAnalyzing ? "hourglass_empty" : "auto_awesome"}
         </span>
-        {isAnalyzing ? 'Analizando compatibilidad...' : 'Adaptar y sugerir cambios con Gemini'}
-      </button>
-      <button
-        type="button"
-        onClick={onImportCV}
-        disabled={isAnalyzing}
-        className="btn-secondary flex items-center justify-center gap-2 w-full"
-      >
-        <span className="material-symbols-outlined text-[18px]">upload_file</span>
-        Importar CV existente desde PDF
+        {isAnalyzing
+          ? "Analizando compatibilidad..."
+          : hasApiKey
+            ? "Adaptar y sugerir cambios"
+            : "Configurá tu API Key en Settings"}
       </button>
     </div>
   );
