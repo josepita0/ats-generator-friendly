@@ -158,7 +158,7 @@ FORMATTING:
 
 CV TEXT:
 ${text}`,
-      response_format: jsonResponseSchema as any,
+      response_format: jsonResponseSchema,
     });
 
     const rawText = interaction.output_text;

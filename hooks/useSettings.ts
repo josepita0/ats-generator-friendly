@@ -38,38 +38,11 @@ export function useSettings() {
   const setStoreSelectedModel = useCVStore((s) => s.setSelectedModel);
   const atsTone = useCVStore((s) => s.atsTone);
   const setStoreAtsTone = useCVStore((s) => s.setAtsTone);
-  const clearAll = useCVStore((s) => s.clearAll);
-
   // ── UI-only state ────────────────────────────────
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<
     'connected' | 'disconnected' | 'testing'
   >('disconnected');
-
-  useEffect(() => {
-    // Auto-verify connection on mount if API key exists
-    if (apiKey) {
-      testConnection();
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ── Settings setters (delegate to store) ─────────
-  const setApiKey = useCallback((key: string) => {
-    setStoreApiKey(key);
-    if (key) {
-      setConnectionStatus('disconnected');
-    } else {
-      setConnectionStatus('disconnected');
-    }
-  }, [setStoreApiKey]);
-
-  const setSelectedModel = useCallback((model: GeminiModel) => {
-    setStoreSelectedModel(model);
-  }, [setStoreSelectedModel]);
-
-  const setAtsTone = useCallback((tone: ATSTone) => {
-    setStoreAtsTone(tone);
-  }, [setStoreAtsTone]);
 
   // ── Connection test ──────────────────────────────
   const testConnection = useCallback(async () => {
@@ -99,6 +72,31 @@ export function useSettings() {
       setIsTestingConnection(false);
     }
   }, [apiKey]);
+
+  useEffect(() => {
+    // Auto-verify connection on mount if API key exists
+    if (apiKey) {
+      testConnection(); // eslint-disable-line react-hooks/set-state-in-effect
+    }
+  }, [testConnection, apiKey]);
+
+  // ── Settings setters (delegate to store) ─────────
+  const setApiKey = useCallback((key: string) => {
+    setStoreApiKey(key);
+    if (key) {
+      setConnectionStatus('disconnected');
+    } else {
+      setConnectionStatus('disconnected');
+    }
+  }, [setStoreApiKey]);
+
+  const setSelectedModel = useCallback((model: GeminiModel) => {
+    setStoreSelectedModel(model);
+  }, [setStoreSelectedModel]);
+
+  const setAtsTone = useCallback((tone: ATSTone) => {
+    setStoreAtsTone(tone);
+  }, [setStoreAtsTone]);
 
   // ── Backup / Export ──────────────────────────────
   const handleExport = useCallback(() => {

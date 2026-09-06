@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<Props, State> {
               Something went wrong
             </h1>
             <p className="mb-6 text-gray-300">
-              The application encountered an unexpected error. Your data is safe in your browser's local storage.
+              The application encountered an unexpected error. Your data is safe in your browser&apos;s local storage.
             </p>
             <button
               onClick={() => {
