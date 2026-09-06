@@ -47,3 +47,12 @@ next-env.d.ts
 
 # generated build artifacts
 /public/pdf.worker.min.mjs
+
+# AI tooling / agent config
+.gentle-ai-default-agent.json
+.atl/
+skills-lock.json
+opencode.json
+.agents/
+CLAUDE.md
+AGENTS.md
