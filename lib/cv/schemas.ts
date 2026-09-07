@@ -12,6 +12,7 @@ export const personalInfoSchema = z.object({
   location: z.string().min(1),
   linkedin: z.string().optional(),
   website: z.string().optional(),
+  generateQR: z.boolean().optional().default(false),
 });
 
 export const experienceEntrySchema = z.object({

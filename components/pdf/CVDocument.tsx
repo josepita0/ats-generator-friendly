@@ -1,10 +1,12 @@
 'use client';
 
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { CVData } from '@/types/cv';
 import { Dictionary } from '@/lib/i18n/dictionaries';
 import { parseBullets } from '@/lib/cv/descriptions';
 import { formatDate } from '@/lib/i18n/dates';
+import { useState, useEffect } from 'react';
+import QRCode from 'qrcode';
 
 const styles = StyleSheet.create({
   page: {
@@ -133,6 +135,27 @@ const styles = StyleSheet.create({
   languageItem: {
     fontSize: 8,
   },
+  qrFooter: {
+    position: 'absolute',
+    bottom: 20,
+    right: 40,
+    alignItems: 'center',
+  },
+  qrTitle: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  qrImage: {
+    width: 80,
+    height: 80,
+  },
+  qrUrl: {
+    fontSize: 7,
+    color: '#666',
+    marginTop: 4,
+  },
 });
 
 interface Props {
@@ -142,6 +165,21 @@ interface Props {
 
 export function CVDocument({ data, dict }: Props) {
   const { personalInfo, summary, experience, education, skills, languages, language } = data;
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (personalInfo.generateQR && personalInfo.website) {
+      QRCode.toDataURL(personalInfo.website, {
+        errorCorrectionLevel: 'M',
+        margin: 2,
+        width: 300,
+      })
+        .then((url) => setQrDataUrl(url))
+        .catch((err) => console.error('Error generating QR code:', err));
+    } else {
+      setQrDataUrl(null);
+    }
+  }, [personalInfo.generateQR, personalInfo.website]);
 
   const summaryContent = language === 'es' ? summary.es : summary.en;
   const expPosition = (exp: CVData['experience'][0]) =>
@@ -250,6 +288,14 @@ export function CVDocument({ data, dict }: Props) {
                 </Text>
               ))}
             </View>
+          </View>
+        )}
+
+        {qrDataUrl && (
+          <View style={styles.qrFooter}>
+            <Text style={styles.qrTitle}>{dict.fields.website}</Text>
+            <Image src={qrDataUrl} style={styles.qrImage} />
+            <Text style={styles.qrUrl}>{personalInfo.website}</Text>
           </View>
         )}
       </Page>

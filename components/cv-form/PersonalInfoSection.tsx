@@ -23,9 +23,7 @@ export function PersonalInfoSection({ dict, forceCollapsed }: Props) {
     <div className="bg-surface-container-lowest rounded-3xl shadow-card">
       <div className="flex items-center justify-between px-spacing-lg py-4 border-b border-outline-variant/30">
         <div className="flex items-center gap-2 font-title-sm text-title-sm text-on-surface">
-          <span className="material-symbols-outlined text-[18px]">
-            badge
-          </span>
+          <span className="material-symbols-outlined text-[18px]">badge</span>
           {dict.form.personalInfo}
         </div>
         <button
@@ -44,7 +42,9 @@ export function PersonalInfoSection({ dict, forceCollapsed }: Props) {
       </div>
       <div
         className={`overflow-hidden transition-all duration-300 ${
-          !effectiveCollapsed ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+          !effectiveCollapsed
+            ? "max-h-[600px] opacity-100"
+            : "max-h-0 opacity-0"
         }`}
       >
         <div className="p-spacing-lg">

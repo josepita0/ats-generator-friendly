@@ -63,13 +63,29 @@ export function PersonalInfoSectionNew() {
           error={personalInfoErrors?.linkedin?.message}
         />
 
-        <InputCard
-          label="Sitio web"
-          icon="language"
-          placeholder="tuportfolio.com"
-          {...register('personalInfo.website')}
-          error={personalInfoErrors?.website?.message}
-        />
+        <div className="space-y-3">
+          <InputCard
+            label="Sitio web"
+            icon="language"
+            placeholder="tuportfolio.com"
+            {...register('personalInfo.website')}
+            error={personalInfoErrors?.website?.message}
+          />
+          <div className="flex items-center gap-2 p-2 bg-primary/5 rounded-lg border border-primary/20">
+            <input
+              type="checkbox"
+              id="generateQR"
+              {...register('personalInfo.generateQR')}
+              className="w-5 h-5 rounded border-2 border-primary text-primary focus:ring-2 focus:ring-primary/30 cursor-pointer"
+            />
+            <label 
+              htmlFor="generateQR"
+              className="text-sm text-on-surface font-medium cursor-pointer select-none"
+            >
+              Generar QR
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   );

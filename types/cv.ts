@@ -12,6 +12,7 @@ export interface PersonalInfo {
   location: string;
   linkedin?: string;
   website?: string;
+  generateQR?: boolean;
 }
 
 export interface ExperienceEntry {
