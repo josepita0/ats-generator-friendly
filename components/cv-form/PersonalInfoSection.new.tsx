@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import type { CVData } from '@/types/cv';
 import { InputCard } from '@/components/ui';
 
@@ -8,9 +8,14 @@ export function PersonalInfoSectionNew() {
   const {
     register,
     formState: { errors },
+    control,
   } = useFormContext<CVData>();
 
   const personalInfoErrors = errors.personalInfo;
+  const generateQR = useWatch({
+    control,
+    name: 'personalInfo.generateQR',
+  });
 
   return (
     <div className="space-y-6">
@@ -85,6 +90,15 @@ export function PersonalInfoSectionNew() {
               Generar QR
             </label>
           </div>
+          {generateQR && (
+            <InputCard
+              label="Etiqueta del QR"
+              icon="label"
+              placeholder="Sitio web"
+              {...register('personalInfo.qrLabel')}
+              error={personalInfoErrors?.qrLabel?.message}
+            />
+          )}
         </div>
       </div>
     </div>

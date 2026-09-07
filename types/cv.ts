@@ -13,6 +13,7 @@ export interface PersonalInfo {
   linkedin?: string;
   website?: string;
   generateQR?: boolean;
+  qrLabel?: string;
 }
 
 export interface ExperienceEntry {

@@ -293,7 +293,7 @@ export function CVDocument({ data, dict }: Props) {
 
         {qrDataUrl && (
           <View style={styles.qrFooter}>
-            <Text style={styles.qrTitle}>{dict.fields.website}</Text>
+            <Text style={styles.qrTitle}>{personalInfo.qrLabel || dict.fields.website}</Text>
             <Image src={qrDataUrl} style={styles.qrImage} />
             <Text style={styles.qrUrl}>{personalInfo.website}</Text>
           </View>
