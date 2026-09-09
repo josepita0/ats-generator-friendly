@@ -23,7 +23,6 @@ interface Props {
   indexabilityRules: IndexabilityRule[];
   suggestedKeywords: string[];
   onApplyKeywords: () => void;
-  onOptimizeWithAI: () => void;
   onExportJSON: () => void;
   paperSize: PaperSize;
   onPaperSizeChange: (v: PaperSize) => void;
@@ -67,7 +66,6 @@ export function ATSDiagnosticPanel({
   indexabilityRules,
   suggestedKeywords,
   onApplyKeywords,
-  onOptimizeWithAI,
   onExportJSON,
   paperSize,
   onPaperSizeChange,

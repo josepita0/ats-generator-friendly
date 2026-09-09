@@ -13,7 +13,6 @@ export function ExperienceSectionNew({ lang }: Props) {
   const {
     register,
     watch,
-    control,
     formState: { errors },
   } = useFormContext<CVData>();
 

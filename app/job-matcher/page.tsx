@@ -452,7 +452,7 @@ function JobMatcherPageInner() {
 
                 {/* Bullet suggestions */}
                 {visibleSuggestions.length > 0 ? (
-                  visibleSuggestions.map((suggestion, displayIdx) => {
+                  visibleSuggestions.map((suggestion) => {
                     // Find original index in analysisResult for state tracking
                     const originalIdx =
                       analysisResult!.suggestions.indexOf(suggestion);

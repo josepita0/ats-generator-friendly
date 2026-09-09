@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useCallback, useMemo } from "react";
 import { useCVForm } from "@/hooks/useCVForm";
 import { useBilingualSync } from "@/hooks/useBilingualSync";
@@ -15,20 +14,6 @@ import { EditorWorkspace } from "@/components/editor/EditorWorkspace";
 import { EditorPreviewPanel } from "@/components/editor/EditorPreviewPanel";
 import { EditorFooter } from "@/components/editor/EditorFooter";
 import { LanguageSelector } from "@/components/ui";
-
-const PdfImporter = dynamic(
-  () =>
-    import("@/components/cv-form/PdfImporter").then((mod) => mod.PdfImporter),
-  { ssr: false },
-);
-
-const TranslateButton = dynamic(
-  () =>
-    import("@/components/cv-form/TranslateButton").then(
-      (mod) => mod.TranslateButton,
-    ),
-  { ssr: false },
-);
 
 export default function EditorPage() {
   return (
@@ -62,7 +47,7 @@ function EditorPageInner() {
     [form],
   );
 
-  const sync = useBilingualSync({
+  useBilingualSync({
     cvData: form.formData,
     currentLang: form.lang,
     onSuccess: handleTranslationSuccess,
@@ -82,8 +67,6 @@ function EditorPageInner() {
     <div className="min-h-screen">
       {/* Header contextual */}
       <EditorHeader
-        cvData={form.formData}
-        lang={form.lang}
         atsScore={atsScore}
         showPreview={form.showPreview}
         onTogglePreview={() => form.setShowPreview(!form.showPreview)}

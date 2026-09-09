@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { CVData, BilingualText } from '@/types/cv';
+import type { CVData } from '@/types/cv';
 import type { EditorSection } from '@/components/editor/types';
 
 /* ── Reused verb lists (same as atsScoring.ts) ── */

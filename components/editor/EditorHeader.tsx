@@ -11,8 +11,6 @@ const PdfImporter = dynamic(
 );
 
 interface EditorHeaderProps {
-  cvData: CVData | null;
-  lang: "es" | "en";
   atsScore: number;
   showPreview: boolean;
   onTogglePreview: () => void;
@@ -21,8 +19,6 @@ interface EditorHeaderProps {
 }
 
 export function EditorHeader({
-  cvData,
-  lang,
   atsScore,
   showPreview,
   onTogglePreview,

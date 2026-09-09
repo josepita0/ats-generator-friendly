@@ -133,11 +133,6 @@ export default function PreviewPage() {
     }
   }, []);
 
-  // Print
-  const handlePrint = useCallback(() => {
-    window.print();
-  }, []);
-
   // Download PDF
   const handleDownloadPDF = useCallback(async () => {
     if (!form.formData) return;
@@ -163,11 +158,6 @@ export default function PreviewPage() {
   // Apply keywords (placeholder — shows feedback)
   const handleApplyKeywords = useCallback(() => {
     // Keywords are suggestions — in a real flow this would update skills
-  }, []);
-
-  // Optimize with AI (placeholder — routes to job-matcher)
-  const handleOptimizeWithAI = useCallback(() => {
-    // Future: call Gemini endpoint
   }, []);
 
   // Loading state
@@ -236,7 +226,6 @@ export default function PreviewPage() {
                 indexabilityRules={panelProps.indexabilityRules}
                 suggestedKeywords={panelProps.suggestedKeywords}
                 onApplyKeywords={handleApplyKeywords}
-                onOptimizeWithAI={handleOptimizeWithAI}
                 onExportJSON={handleExportJSON}
                 paperSize={paperSize}
                 onPaperSizeChange={setPaperSize}
@@ -254,7 +243,6 @@ export default function PreviewPage() {
             <div className="card mb-4">
               <PreviewControls
                 onCopyText={handleCopyText}
-                onPrint={handlePrint}
                 onDownloadPDF={handleDownloadPDF}
                 zoom={zoom}
                 onZoomChange={setZoom}

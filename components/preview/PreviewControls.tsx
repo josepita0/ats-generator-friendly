@@ -5,7 +5,6 @@ import type { PaperSize } from "@/components/preview/LayoutParameters";
 
 interface Props {
   onCopyText: () => void;
-  onPrint: () => void;
   onDownloadPDF: () => void;
   zoom: number;
   onZoomChange: (z: number) => void;
@@ -15,7 +14,6 @@ interface Props {
 
 export function PreviewControls({
   onCopyText,
-  onPrint,
   onDownloadPDF,
   zoom,
   onZoomChange,

@@ -134,6 +134,7 @@ export function useCVForm() {
   // knows this is our own sync (not an external change).
   const storeSyncTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/incompatible-library -- RHF watch() is the standard subscription API; no memoized consumers
     const subscription = watch((value) => {
       if (value) {
         setIsSaving(true);
