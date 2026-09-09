@@ -10,6 +10,8 @@ interface ExpandableCardProps {
   isExpanded?: boolean;
   onToggle?: () => void;
   onDelete?: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
   children: ReactNode;
 }
 
@@ -21,6 +23,8 @@ export function ExpandableCard({
   isExpanded = false,
   onToggle,
   onDelete,
+  onMoveUp,
+  onMoveDown,
   children,
 }: ExpandableCardProps) {
   const id = useId();
@@ -60,6 +64,32 @@ export function ExpandableCard({
           <span className="px-2 py-0.5 bg-primary-container/20 text-primary font-label-xs text-label-xs rounded-full">
             {badge}
           </span>
+        )}
+
+        {/* Reorder controls */}
+        {(onMoveUp || onMoveDown) && (
+          <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
+            {onMoveUp && (
+              <button
+                type="button"
+                onClick={onMoveUp}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer"
+                aria-label="Move up"
+              >
+                <span className="material-symbols-outlined text-[16px]">arrow_upward</span>
+              </button>
+            )}
+            {onMoveDown && (
+              <button
+                type="button"
+                onClick={onMoveDown}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer"
+                aria-label="Move down"
+              >
+                <span className="material-symbols-outlined text-[16px]">arrow_downward</span>
+              </button>
+            )}
+          </div>
         )}
 
         <span

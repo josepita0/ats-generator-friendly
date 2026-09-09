@@ -17,18 +17,18 @@ export function ExperienceSectionNew({ lang }: Props) {
     formState: { errors },
   } = useFormContext<CVData>();
 
-  const { fields, append, remove } = useFieldArray({ name: 'experience' });
+  const { fields, append, remove, move } = useFieldArray({ name: 'experience' });
   const experienceValues = watch('experience');
-  const [expandedStates, setExpandedStates] = useState<Record<number, boolean>>({});
+  const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
 
-  const toggleExpanded = (index: number) => {
-    setExpandedStates((prev) => ({ ...prev, [index]: !prev[index] }));
+  const toggleExpanded = (id: string) => {
+    setExpandedStates((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const handleAdd = () => {
-    const newIndex = fields.length;
+    const newId = crypto.randomUUID();
     append({
-      id: crypto.randomUUID(),
+      id: newId,
       company: '',
       position: { es: '', en: '' },
       location: '',
@@ -37,13 +37,21 @@ export function ExperienceSectionNew({ lang }: Props) {
       current: false,
       descriptions: { es: '', en: '' },
     });
-    setExpandedStates((prev) => ({ ...prev, [newIndex]: true }));
+    setExpandedStates((prev) => ({ ...prev, [newId]: true }));
+  };
+
+  const handleMoveUp = (index: number) => {
+    if (index > 0) move(index, index - 1);
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index < fields.length - 1) move(index, index + 1);
   };
 
   return (
     <div className="space-y-4">
       {fields.map((field, index) => {
-        const isExpanded = expandedStates[index] ?? false;
+        const isExpanded = expandedStates[field.id] ?? false;
         const expErrors = errors.experience?.[index];
         const expData = experienceValues[index];
 
@@ -54,8 +62,10 @@ export function ExperienceSectionNew({ lang }: Props) {
             subtitle={expData?.position?.[lang] || (lang === 'es' ? 'Sin puesto definido' : 'No position defined')}
             icon="work"
             isExpanded={isExpanded}
-            onToggle={() => toggleExpanded(index)}
+            onToggle={() => toggleExpanded(field.id)}
             onDelete={() => remove(index)}
+            onMoveUp={index > 0 ? () => handleMoveUp(index) : undefined}
+            onMoveDown={index < fields.length - 1 ? () => handleMoveDown(index) : undefined}
           >
             <div className="space-y-4">
               {/* Empresa */}
