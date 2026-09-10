@@ -12,7 +12,7 @@ import { CVData } from "@/types/cv";
 import { Dictionary } from "@/lib/i18n/dictionaries";
 import { parseBullets } from "@/lib/cv/descriptions";
 import { formatDate } from "@/lib/i18n/dates";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import QRCode from "qrcode";
 
 const styles = StyleSheet.create({
@@ -196,6 +196,15 @@ export function CVDocument({ data, dict }: Props) {
     }
   }, [personalInfo.generateQR, personalInfo.website]);
 
+  // Reserve bottom space when QR is active so content never overlaps the QR image
+  const pageStyle = useMemo(
+    () =>
+      qrDataUrl
+        ? [styles.page, { paddingBottom: 120 } as const]
+        : styles.page,
+    [qrDataUrl],
+  );
+
   const summaryContent = language === "es" ? summary.es : summary.en;
   const expPosition = (exp: CVData["experience"][0]) =>
     language === "es" ? exp.position.es : exp.position.en;
@@ -222,7 +231,7 @@ export function CVDocument({ data, dict }: Props) {
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={pageStyle}>
         <View style={styles.header}>
           <Text style={styles.name}>{personalInfo.name}</Text>
           <View style={styles.contactRow}>
