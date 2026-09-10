@@ -116,12 +116,23 @@ export function EditorWorkspace({
   /* ── Apply suggestion to form ─────────────────── */
 
   const applySuggestionToForm = useCallback(
-    (improved: string, _index: number) => {
+    (improved: string, index: number) => {
       const values = methods.getValues() as CVData;
 
       switch (activeSection) {
         case "summary": {
-          methods.setValue(`summary.${lang}`, improved);
+          // Replace only the matched fragment so the rest of the summary is preserved
+          const current = values.summary?.[lang] ?? "";
+          const original = suggestions[index]?.original;
+          if (original && current.includes(original)) {
+            methods.setValue(
+              `summary.${lang}`,
+              current.replace(original, improved),
+            );
+            return;
+          }
+          // Fallback: if original not found, copy improved to clipboard
+          navigator.clipboard?.writeText(improved);
           break;
         }
 
@@ -129,9 +140,9 @@ export function EditorWorkspace({
           const experience = values.experience || [];
           for (let i = 0; i < experience.length; i++) {
             const desc = experience[i].descriptions[lang];
-            if (desc && desc.includes(suggestions[_index].original)) {
+            if (desc && desc.includes(suggestions[index].original)) {
               const updated = desc.replace(
-                suggestions[_index].original,
+                suggestions[index].original,
                 improved,
               );
               methods.setValue(`experience.${i}.descriptions.${lang}`, updated);
@@ -147,18 +158,18 @@ export function EditorWorkspace({
           const education = values.education || [];
           for (let i = 0; i < education.length; i++) {
             const degree = education[i].degree[lang];
-            if (degree && degree.includes(suggestions[_index].original)) {
+            if (degree && degree.includes(suggestions[index].original)) {
               const updated = degree.replace(
-                suggestions[_index].original,
+                suggestions[index].original,
                 improved,
               );
               methods.setValue(`education.${i}.degree.${lang}`, updated);
               return;
             }
             const field = education[i].field[lang];
-            if (field && field.includes(suggestions[_index].original)) {
+            if (field && field.includes(suggestions[index].original)) {
               const updated = field.replace(
-                suggestions[_index].original,
+                suggestions[index].original,
                 improved,
               );
               methods.setValue(`education.${i}.field.${lang}`, updated);
@@ -174,7 +185,7 @@ export function EditorWorkspace({
           const skills = values.skills || [];
           for (let catIdx = 0; catIdx < skills.length; catIdx++) {
             const skillIdx = skills[catIdx].skills.findIndex((s) =>
-              s.includes(suggestions[_index].original),
+              s.includes(suggestions[index].original),
             );
             if (skillIdx !== -1) {
               methods.setValue(`skills.${catIdx}.skills.${skillIdx}`, improved);
@@ -188,11 +199,11 @@ export function EditorWorkspace({
         case "languages": {
           const languages = values.languages || [];
           for (let i = 0; i < languages.length; i++) {
-            if (languages[i].language.includes(suggestions[_index].original)) {
+            if (languages[i].language.includes(suggestions[index].original)) {
               methods.setValue(`languages.${i}.language`, improved);
               return;
             }
-            if (languages[i].level.includes(suggestions[_index].original)) {
+            if (languages[i].level.includes(suggestions[index].original)) {
               methods.setValue(`languages.${i}.level`, improved);
               return;
             }
