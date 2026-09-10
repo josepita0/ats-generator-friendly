@@ -322,9 +322,11 @@ export function CVDocument({ data, dict }: Props) {
 
         {qrDataUrl && (
           <View style={styles.qrFooter}>
-            <Text style={styles.qrTitle}>
-              {personalInfo.qrLabel || dict.fields.website}
-            </Text>
+            {personalInfo.showQRTitle !== false && (
+              <Text style={styles.qrTitle}>
+                {personalInfo.qrLabel || dict.fields.website}
+              </Text>
+            )}
             {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image does not support alt */}
             <Image src={qrDataUrl} style={styles.qrImage} />
             <Text style={styles.qrUrl}>{personalInfo.website}</Text>

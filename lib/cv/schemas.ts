@@ -13,6 +13,7 @@ export const personalInfoSchema = z.object({
   linkedin: z.string().optional(),
   website: z.string().optional(),
   generateQR: z.boolean().optional().default(false),
+  showQRTitle: z.boolean().optional().default(true),
   qrLabel: z.string().optional(),
 });
 

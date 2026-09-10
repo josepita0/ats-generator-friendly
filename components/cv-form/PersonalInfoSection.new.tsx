@@ -16,6 +16,10 @@ export function PersonalInfoSectionNew() {
     control,
     name: 'personalInfo.generateQR',
   });
+  const showQRTitle = useWatch({
+    control,
+    name: 'personalInfo.showQRTitle',
+  });
 
   return (
     <div className="space-y-6">
@@ -91,13 +95,31 @@ export function PersonalInfoSectionNew() {
             </label>
           </div>
           {generateQR && (
-            <InputCard
-              label="Etiqueta del QR"
-              icon="label"
-              placeholder="Sitio web"
-              {...register('personalInfo.qrLabel')}
-              error={personalInfoErrors?.qrLabel?.message}
-            />
+            <>
+              <div className="flex items-center gap-2 p-2 bg-primary/5 rounded-lg border border-primary/20">
+                <input
+                  type="checkbox"
+                  id="showQRTitle"
+                  {...register('personalInfo.showQRTitle')}
+                  className="w-5 h-5 rounded border-2 border-primary text-primary focus:ring-2 focus:ring-primary/30 cursor-pointer"
+                />
+                <label 
+                  htmlFor="showQRTitle"
+                  className="text-sm text-on-surface font-medium cursor-pointer select-none"
+                >
+                  ¿Desea agregar título?
+                </label>
+              </div>
+              {showQRTitle && (
+                <InputCard
+                  label="Etiqueta del QR"
+                  icon="label"
+                  placeholder="Sitio web"
+                  {...register('personalInfo.qrLabel')}
+                  error={personalInfoErrors?.qrLabel?.message}
+                />
+              )}
+            </>
           )}
         </div>
       </div>
