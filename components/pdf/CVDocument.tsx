@@ -1,36 +1,43 @@
-'use client';
+"use client";
 
-import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
-import { CVData } from '@/types/cv';
-import { Dictionary } from '@/lib/i18n/dictionaries';
-import { parseBullets } from '@/lib/cv/descriptions';
-import { formatDate } from '@/lib/i18n/dates';
-import { useState, useEffect } from 'react';
-import QRCode from 'qrcode';
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
+import { CVData } from "@/types/cv";
+import { Dictionary } from "@/lib/i18n/dictionaries";
+import { parseBullets } from "@/lib/cv/descriptions";
+import { formatDate } from "@/lib/i18n/dates";
+import { useState, useEffect } from "react";
+import QRCode from "qrcode";
 
 const styles = StyleSheet.create({
   page: {
     padding: 40,
-    fontFamily: 'Helvetica',
+    fontFamily: "Helvetica",
     fontSize: 10,
-    color: '#1a1a1a',
+    color: "#1a1a1a",
   },
   header: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 16,
   },
   name: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   contactRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
     gap: 12,
     fontSize: 8,
-    color: '#4a4a4a',
+    color: "#4a4a4a",
   },
   contactItem: {
     marginHorizontal: 4,
@@ -40,10 +47,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 11,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
+    fontWeight: "bold",
+    textTransform: "uppercase",
     borderBottomWidth: 0.5,
-    borderBottomColor: '#888',
+    borderBottomColor: "#888",
     paddingBottom: 2,
     marginBottom: 6,
   },
@@ -55,38 +62,38 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   experienceHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
   },
   position: {
     fontSize: 10,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   dateRange: {
     fontSize: 8,
-    color: '#666',
+    color: "#666",
   },
   companyRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   company: {
     fontSize: 9,
-    color: '#333',
+    color: "#333",
   },
   location: {
     fontSize: 8,
-    color: '#666',
+    color: "#666",
   },
   description: {
     fontSize: 8,
     marginTop: 2,
     lineHeight: 1.3,
-    color: '#2a2a2a',
+    color: "#2a2a2a",
   },
   bulletRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 1,
     paddingLeft: 8,
   },
@@ -97,7 +104,7 @@ const styles = StyleSheet.create({
   bulletText: {
     fontSize: 8,
     lineHeight: 1.3,
-    color: '#2a2a2a',
+    color: "#2a2a2a",
     flex: 1,
   },
   educationEntry: {
@@ -105,46 +112,46 @@ const styles = StyleSheet.create({
   },
   degree: {
     fontSize: 9,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   institution: {
     fontSize: 8,
-    color: '#333',
+    color: "#333",
   },
   field: {
     fontSize: 8,
-    color: '#555',
+    color: "#555",
   },
   skillsCategory: {
     marginBottom: 4,
   },
   categoryName: {
     fontSize: 8,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   skillsList: {
     fontSize: 8,
-    color: '#444',
+    color: "#444",
   },
   languagesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 16,
   },
   languageItem: {
     fontSize: 8,
   },
   qrFooter: {
-    position: 'absolute',
-    bottom: 20,
+    position: "absolute",
+    bottom: 10,
     right: 40,
-    alignItems: 'center',
+    alignItems: "center",
   },
   qrTitle: {
     fontSize: 8,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 4,
   },
   qrImage: {
@@ -153,7 +160,7 @@ const styles = StyleSheet.create({
   },
   qrUrl: {
     fontSize: 7,
-    color: '#666',
+    color: "#666",
     marginTop: 4,
   },
 });
@@ -164,28 +171,36 @@ interface Props {
 }
 
 export function CVDocument({ data, dict }: Props) {
-  const { personalInfo, summary, experience, education, skills, languages, language } = data;
+  const {
+    personalInfo,
+    summary,
+    experience,
+    education,
+    skills,
+    languages,
+    language,
+  } = data;
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (personalInfo.generateQR && personalInfo.website) {
       QRCode.toDataURL(personalInfo.website, {
-        errorCorrectionLevel: 'M',
+        errorCorrectionLevel: "M",
         margin: 2,
         width: 300,
       })
         .then((url) => setQrDataUrl(url))
-        .catch((err) => console.error('Error generating QR code:', err));
+        .catch((err) => console.error("Error generating QR code:", err));
     } else {
       setQrDataUrl(null); // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, [personalInfo.generateQR, personalInfo.website]);
 
-  const summaryContent = language === 'es' ? summary.es : summary.en;
-  const expPosition = (exp: CVData['experience'][0]) =>
-    language === 'es' ? exp.position.es : exp.position.en;
-  const expDesc = (exp: CVData['experience'][0]) =>
-    language === 'es' ? exp.descriptions.es : exp.descriptions.en;
+  const summaryContent = language === "es" ? summary.es : summary.en;
+  const expPosition = (exp: CVData["experience"][0]) =>
+    language === "es" ? exp.position.es : exp.position.en;
+  const expDesc = (exp: CVData["experience"][0]) =>
+    language === "es" ? exp.descriptions.es : exp.descriptions.en;
 
   const renderDescription = (text: string) => {
     if (!text) return null;
@@ -200,10 +215,10 @@ export function CVDocument({ data, dict }: Props) {
     }
     return <Text style={styles.description}>{text}</Text>;
   };
-  const eduDegree = (edu: CVData['education'][0]) =>
-    language === 'es' ? edu.degree.es : edu.degree.en;
-  const eduField = (edu: CVData['education'][0]) =>
-    language === 'es' ? edu.field.es : edu.field.en;
+  const eduDegree = (edu: CVData["education"][0]) =>
+    language === "es" ? edu.degree.es : edu.degree.en;
+  const eduField = (edu: CVData["education"][0]) =>
+    language === "es" ? edu.field.es : edu.field.en;
 
   return (
     <Document>
@@ -211,11 +226,21 @@ export function CVDocument({ data, dict }: Props) {
         <View style={styles.header}>
           <Text style={styles.name}>{personalInfo.name}</Text>
           <View style={styles.contactRow}>
-            {personalInfo.email && <Text style={styles.contactItem}>{personalInfo.email}</Text>}
-            {personalInfo.phone && <Text style={styles.contactItem}>{personalInfo.phone}</Text>}
-            {personalInfo.location && <Text style={styles.contactItem}>{personalInfo.location}</Text>}
-            {personalInfo.linkedin && <Text style={styles.contactItem}>{personalInfo.linkedin}</Text>}
-            {personalInfo.website && <Text style={styles.contactItem}>{personalInfo.website}</Text>}
+            {personalInfo.email && (
+              <Text style={styles.contactItem}>{personalInfo.email}</Text>
+            )}
+            {personalInfo.phone && (
+              <Text style={styles.contactItem}>{personalInfo.phone}</Text>
+            )}
+            {personalInfo.location && (
+              <Text style={styles.contactItem}>{personalInfo.location}</Text>
+            )}
+            {personalInfo.linkedin && (
+              <Text style={styles.contactItem}>{personalInfo.linkedin}</Text>
+            )}
+            {personalInfo.website && (
+              <Text style={styles.contactItem}>{personalInfo.website}</Text>
+            )}
           </View>
         </View>
 
@@ -234,7 +259,10 @@ export function CVDocument({ data, dict }: Props) {
                 <View style={styles.experienceHeader}>
                   <Text style={styles.position}>{expPosition(exp)}</Text>
                   <Text style={styles.dateRange}>
-                    {formatDate(exp.startDate, language)} — {exp.current ? 'Present' : formatDate(exp.endDate, language)}
+                    {formatDate(exp.startDate, language)} —{" "}
+                    {exp.current
+                      ? "Present"
+                      : formatDate(exp.endDate, language)}
                   </Text>
                 </View>
                 <View style={styles.companyRow}>
@@ -258,7 +286,8 @@ export function CVDocument({ data, dict }: Props) {
                 <View style={styles.companyRow}>
                   <Text style={styles.institution}>{edu.institution}</Text>
                   <Text style={styles.dateRange}>
-                    {formatDate(edu.startDate, language)} — {formatDate(edu.endDate, language)}
+                    {formatDate(edu.startDate, language)} —{" "}
+                    {formatDate(edu.endDate, language)}
                   </Text>
                 </View>
               </View>
@@ -272,7 +301,7 @@ export function CVDocument({ data, dict }: Props) {
             {skills.map((cat) => (
               <View key={cat.id} style={styles.skillsCategory}>
                 <Text style={styles.categoryName}>{cat.category}:</Text>
-                <Text style={styles.skillsList}>{cat.skills.join(', ')}</Text>
+                <Text style={styles.skillsList}>{cat.skills.join(", ")}</Text>
               </View>
             ))}
           </View>
@@ -293,7 +322,9 @@ export function CVDocument({ data, dict }: Props) {
 
         {qrDataUrl && (
           <View style={styles.qrFooter}>
-            <Text style={styles.qrTitle}>{personalInfo.qrLabel || dict.fields.website}</Text>
+            <Text style={styles.qrTitle}>
+              {personalInfo.qrLabel || dict.fields.website}
+            </Text>
             {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image does not support alt */}
             <Image src={qrDataUrl} style={styles.qrImage} />
             <Text style={styles.qrUrl}>{personalInfo.website}</Text>
