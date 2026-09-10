@@ -155,8 +155,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   qrImage: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
   },
   qrUrl: {
     fontSize: 7,
